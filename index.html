@@ -323,6 +323,45 @@
   #ins-takeaways li:last-child{border-bottom:none}
   #ins-takeaways li:before{content:'\2192';position:absolute;left:0;color:var(--gold)}
   .ins-rate .n{font-size:24px}.ins-rate .l{line-height:1.3}
+  /* call mode */
+  .call-wrap{max-width:640px;margin:0 auto}
+  .call-verse{text-align:center;color:var(--gold-light);font-style:italic;font-size:13.5px;padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:6px}
+  .call-pray{text-align:center;color:var(--muted);font-size:12px;margin-bottom:14px}
+  .call-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .call-progress{color:var(--muted);font-size:12.5px}
+  .call-timer{font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--gold)}
+  .call-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:22px;text-align:center}
+  .call-meta{color:var(--gold);letter-spacing:2px;font-size:11px;text-transform:uppercase}
+  .call-name{font-family:'Playfair Display',serif;font-size:28px;margin:6px 0 2px}
+  .call-sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+  .call-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px}
+  .cbtn{display:inline-flex;align-items:center;gap:6px;padding:13px 18px;border-radius:12px;border:1px solid var(--border2);background:var(--surface3);color:var(--text);font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s var(--ease);min-height:48px}
+  .cbtn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#161610;border-color:transparent}
+  .cbtn:hover{border-color:var(--gold)}
+  .call-nophone{color:var(--muted);font-size:13px;align-self:center}
+  .call-out{border-top:1px solid var(--border);padding-top:14px}
+  .call-out .col{color:var(--muted);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+  .obtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .obtns button{padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:13px;cursor:pointer;min-height:44px}
+  .obtns button:hover{border-color:var(--gold)}
+  .obtns .good{border-color:#2FA79E;color:#7fd8cf}
+  .obtns .bad{border-color:var(--danger);color:#e88}
+  .obtns .skip{color:var(--muted)}
+  .call-done{text-align:center;padding:30px 10px}
+  .call-done .cd-big{font-family:'Playfair Display',serif;font-size:26px;margin-bottom:8px}
+  #call-script{display:none;margin-top:14px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13.5px;line-height:1.55}
+  #call-script h4{color:var(--gold);margin:12px 0 4px;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+  #call-script h4:first-child{margin-top:0}
+  #call-script .q{color:var(--gold-light);font-weight:600;margin-top:10px}
+  /* money */
+  .money-price{display:flex;align-items:center;gap:8px;margin:0 0 16px;color:var(--muted);font-size:13px}
+  .money-price input{width:90px;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:8px 10px;font-size:14px}
+  .money-statement{font-size:16px;line-height:1.5;margin:4px 0 18px}
+  .money-statement b{color:var(--gold-light)}
+  .mile{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+  .mile:last-child{border-bottom:none}
+  .mile .ml{font-weight:600}
+  .mile .mr{color:var(--gold-light);font-family:'JetBrains Mono',monospace}
 </style>
 </head>
 <body>
@@ -330,8 +369,10 @@
   <div class="side-top"><span class="side-logo">A</span><button class="side-toggle" onclick="toggleSidebar()" title="Expand / collapse" id="side-toggle">&#8249;</button></div>
   <nav class="side-nav" id="tabs">
     <button data-t="overview" class="on"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg><span class="lbl">Overview</span></button>
+    <button data-t="call"><svg viewBox="0 0 16 16"><path d="M4.5 2.5l2 .5 1 2.5-1.5 1a7 7 0 003 3l1-1.5 2.5 1 .5 2c0 1-1 1.7-2 1.5C6 12 4 8 3 5c-.2-1 .5-2 1.5-2.5z"/></svg><span class="lbl">Call Mode</span></button>
     <button data-t="coach"><svg viewBox="0 0 16 16"><path d="M2.5 3h11v8h-6l-3 2.5V11h-2z"/></svg><span class="lbl">Coach</span></button>
     <button data-t="insights"><svg viewBox="0 0 16 16"><path d="M2 14V2M2 14h12M4.5 11l3-3 2.5 2 3.5-4.5"/></svg><span class="lbl">Insights</span></button>
+    <button data-t="money"><svg viewBox="0 0 16 16"><path d="M8 2v12M5 5.5h4a1.6 1.6 0 010 3.2H6a1.6 1.6 0 000 3.2h5"/></svg><span class="lbl">Money</span></button>
     <button data-t="crm"><svg viewBox="0 0 16 16"><circle cx="8" cy="5.2" r="2.6"/><path d="M2.5 13.5c0-3 2.7-4.2 5.5-4.2s5.5 1.2 5.5 4.2"/></svg><span class="lbl">CRM</span></button>
     <button data-t="pipeline"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="3" height="10"/><rect x="6.5" y="3" width="3" height="7"/><rect x="11" y="3" width="3" height="5"/></svg><span class="lbl">Pipeline</span></button>
     <button data-t="tasks"><svg viewBox="0 0 16 16"><path d="M3 8.2l3 3 7-7"/></svg><span class="lbl">Tasks</span></button>
@@ -387,6 +428,45 @@
     </div>
   </section>
 
+  <!-- CALL MODE -->
+  <section class="page" id="p-call">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Call Mode</h2><div class="hint">One lead at a time. Tap, dial, log, next. This is the money move.</div></div></div>
+      <button class="ghost" onclick="callScriptToggle()">Script</button>
+    </div>
+    <div class="call-wrap">
+      <div class="call-verse" id="call-verse"></div>
+      <div class="call-pray">Say a quick prayer. Work as unto the Lord. Then dial.</div>
+      <div class="call-bar">
+        <span class="call-progress" id="call-progress"></span>
+        <span class="call-timer" id="call-timer">25:00</span>
+        <button class="cbtn" id="call-timer-btn" onclick="callTimerToggle()" style="min-height:40px;padding:9px 14px;font-size:13px">Start 25-min power hour</button>
+      </div>
+      <div class="call-card" id="call-card"></div>
+      <div id="call-script">
+        <h4>Opener</h4>
+        Hi, is this [owner]? I will be quick. I saw [a specific detail about their shop]. Quick question: when you are on a job and the phone rings, what happens to that call?
+        <div class="q">Then:</div>
+        Most shops your size lose a few jobs a week to calls that ring out. I built something that answers your phone and books the job when you cannot pick up. Can I text you a free 30 second demo of it handling one of your calls?
+        <h4>If they say yes</h4>
+        Great, what is the best number? Sending now. Give it a listen and text me back what you think. If you like it, we grab 10 minutes.
+        <h4>Objections</h4>
+        <div class="q">I am busy right now</div>
+        Totally, 20 seconds and I am gone. Can I just text you the demo and you look when you have a sec?
+        <div class="q">We already have voicemail or someone</div>
+        Makes sense. This is not voicemail, it actually answers, talks to the customer, and books the job so it does not go to the next shop. Worth 30 seconds to hear?
+        <div class="q">How much is it</div>
+        Depends what you need, but it is a fraction of a receptionist and it never misses a call. Let me show you it working first, then price is easy.
+        <div class="q">Does it actually work</div>
+        Fair question. That is exactly why I want to send the demo instead of just telling you. Hear it take a call, then decide.
+        <div class="q">Just send me an email</div>
+        Will do. What is the best address? I will also text the demo so you can hear it, that is the part that matters.
+        <div class="q">Not interested</div>
+        No worries, appreciate your time. If you ever get slammed and start missing calls, I am here. God bless.
+      </div>
+    </div>
+  </section>
+
   <!-- COACH -->
   <section class="page" id="p-coach">
     <div class="modhead">
@@ -416,6 +496,19 @@
     <div class="grid2">
       <div class="card"><h3>Leads by source</h3><div class="hint">Where they came from</div><div id="ins-source"></div></div>
       <div class="card"><h3>This week's activity</h3><div class="hint">Touches logged, last 7 days, by person</div><div id="ins-activity"></div></div>
+    </div>
+  </section>
+
+  <!-- MONEY -->
+  <section class="page" id="p-money">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Money Math</h2><div class="hint">The $10k goal in real numbers, not vibes.</div></div></div>
+    </div>
+    <div class="money-price">Average price per client: $ <input id="money-price" type="number" value="1500" min="100" step="100" onchange="renderMoney()"> per month</div>
+    <div class="stats" id="money-tiles"></div>
+    <div class="hero">
+      <div class="card"><h3>The math</h3><div class="hint">What it takes to get there</div><div class="money-statement" id="money-statement"></div><div id="money-miles"></div></div>
+      <div class="card"><h3>Why it matters</h3><div class="hint">Keep this in front of you</div><div id="money-why"></div></div>
     </div>
   </section>
 
@@ -649,7 +742,7 @@ function stageOf(st){st=String(st||'').toLowerCase();
 function demoLink(biz,city,owner,niche){return DEMO+'?biz='+encodeURIComponent(biz||'')+'&city='+encodeURIComponent(city||'Calgary')+'&owner='+encodeURIComponent(owner||'there')+(niche?'&type='+encodeURIComponent(niche):'');}
 function animateNum(el,to,suffix){if(!el)return;to=parseInt(to,10)||0;var t0=null;function step(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/650,1);var v=Math.round((0.5-Math.cos(p*Math.PI)/2)*to);el.textContent=v+(suffix||'');if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
-function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();window.scrollTo({top:0,behavior:'smooth'});}
+function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();if(name==='call')callOpen();if(name==='money')renderMoney();window.scrollTo({top:0,behavior:'smooth'});}
 document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t){tab(b.dataset.t);closeSide();}});
 function toggleSidebar(){var ex=!document.body.classList.contains('side-expanded');document.body.classList.toggle('side-expanded',ex);var t=document.getElementById('side-toggle');if(t)t.innerHTML=ex?'‹':'›';try{localStorage.setItem('ambrosia_side',ex?'1':'0');}catch(e){}}
 function openSide(){document.body.classList.add('side-open');}
@@ -723,7 +816,7 @@ async function deleteEditor(){
 }
 async function reloadTab(tab){
   if(tab==='Leads'){LEADS=(await getTab('Leads'))||[];refreshFilters();overview();renderLeads();renderInsights();}
-  else if(tab==='Deals'){DEALS=(await getTab('Deals'))||[];renderDeals();renderGoal();renderInsights();}
+  else if(tab==='Deals'){DEALS=(await getTab('Deals'))||[];renderDeals();renderGoal();renderInsights();renderMoney();}
   else if(tab==='Tasks'){TASKS=(await getTab('Tasks'))||[];renderTasks();renderFocus();}
   else if(tab==='Notes'){NOTES=(await getTab('Notes'))||[];renderNotes();}
   else if(tab==='Events'){EVENTS=(await getTab('Events'))||[];renderCal();renderFocus();}
@@ -775,6 +868,57 @@ function renderInsights(){
   if(never>0)t.push(never+' lead'+(never===1?'':'s')+' never contacted. That is your call list today.');
   if(!t.length)t.push('Pipeline looks healthy. Keep the calls going.');
   var el=document.getElementById('ins-takeaways');if(el)el.innerHTML=t.map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
+}
+
+/* ---------- call mode (power hour) ---------- */
+var VERSES=[
+ 'Whatever you do, work at it with all your heart, as working for the Lord. (Colossians 3:23)',
+ 'Commit to the Lord whatever you do, and he will establish your plans. (Proverbs 16:3)',
+ 'The plans of the diligent lead to profit as surely as haste leads to poverty. (Proverbs 21:5)',
+ 'Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up. (Galatians 6:9)',
+ 'Whoever is faithful with very little will also be faithful with much. (Luke 16:10)',
+ 'Do you see someone skilled in their work? They will serve before kings. (Proverbs 22:29)',
+ 'The hand of the diligent will rule, while the slothful will be put to forced labor. (Proverbs 12:24)',
+ 'I can do all this through him who gives me strength. (Philippians 4:13)'
+];
+var CALLQ=[],CALLI=0,CALL_MADE=0,CALLTIMER=null,CALLSECS=0;
+function buildCallQueue(){var td=today();var stop={won:1,lost:1,declined:1,suppressed:1};var due=live(LEADS).filter(function(l){var s=String(l.status||'').toLowerCase();if(stop[s])return false;var nt=String(l.next_touch||'').slice(0,10);return nt&&nt<=td&&mine(l);});due.sort(function(a,b){return String(a.next_touch)<String(b.next_touch)?-1:1;});var fresh=live(LEADS).filter(function(l){return String(l.status||'new').toLowerCase()==='new'&&mine(l)&&String(l.phone||'').replace(/[^0-9+]/g,'');});CALLQ=due.concat(fresh);}
+function callOpen(){buildCallQueue();CALLI=0;CALL_MADE=0;renderCall();}
+function callProgress(){var p=document.getElementById('call-progress');if(p)p.textContent=(CALLQ.length?('Lead '+Math.min(CALLI+1,CALLQ.length)+' of '+CALLQ.length):'No leads queued')+' · '+CALL_MADE+' logged';}
+function renderCall(){var v=VERSES[(new Date()).getDate()%VERSES.length];var vel=document.getElementById('call-verse');if(vel)vel.textContent=v;var card=document.getElementById('call-card');if(!card)return;
+  if(CALLI>=CALLQ.length){card.innerHTML='<div class="call-done"><div class="cd-big">'+(CALL_MADE?'Queue clear.':'Nothing queued.')+'</div><div style="color:var(--muted);margin-bottom:16px">'+(CALL_MADE?('Solid. '+CALL_MADE+' logged this session.'):'No follow-ups due and no fresh leads with a number. Source a batch.')+'</div><button class="add" onclick="tab(\'gen\')">Get more leads</button></div>';callProgress();return;}
+  var l=CALLQ[CALLI];var phone=String(l.phone||'').replace(/[^0-9+]/g,'');var st=String(l.status||'').toLowerCase();var nt=String(l.next_touch||'').slice(0,10);var why=st==='new'?'New, never called':(nt&&nt<today()?'Follow-up overdue':(nt?'Follow-up due':'Work this lead'));var demo=demoLink(l.business_name,l.city,l.contact_first,l.niche);window._callDemo=demo;var sms='Hey '+(l.contact_first||'there')+', I built a 30 second AI receptionist for '+(l.business_name||'your business')+', want to hear it take a call? '+demo;
+  var h='<div class="call-meta">'+esc(why)+(l.city?' · '+esc(l.city):'')+'</div>';
+  h+='<div class="call-name">'+esc(l.business_name||'Lead')+'</div>';
+  h+='<div class="call-sub">'+esc((l.contact_first?l.contact_first:'')+(l.contact_first&&l.phone?' · ':'')+(l.phone||''))+'</div>';
+  h+='<div class="call-actions">';
+  if(phone){h+='<a class="cbtn primary" href="tel:'+phone+'">Call</a>';h+='<a class="cbtn" href="sms:'+phone+'?&body='+encodeURIComponent(sms)+'">Text demo</a>';}
+  else{h+='<span class="call-nophone">No phone on file. Skip or add one in the CRM.</span>';}
+  h+='<button class="cbtn" type="button" onclick="callCopyDemo()">Copy demo link</button>';
+  h+='</div>';
+  h+='<div class="call-out"><div class="col">Log the outcome</div><div class="obtns">';
+  h+='<button onclick="callLog(\'noanswer\')">No answer</button>';
+  h+='<button onclick="callLog(\'voicemail\')">Left VM</button>';
+  h+='<button onclick="callLog(\'texted\')">Texted demo</button>';
+  h+='<button class="good" onclick="callLog(\'interested\')">Interested</button>';
+  h+='<button class="bad" onclick="callLog(\'declined\')">Not interested</button>';
+  h+='<button class="skip" onclick="callSkip()">Skip</button>';
+  h+='</div></div>';
+  card.innerHTML=h;callProgress();}
+function callCopyDemo(){var l=window._callDemo||'';if(navigator.clipboard)navigator.clipboard.writeText(l).then(function(){toast('Demo link copied');});else toast(l);}
+function callSkip(){CALLI++;renderCall();}
+async function callLog(kind){var l=CALLQ[CALLI];if(!l)return;var map={noanswer:['contacted','Called, no answer',2],voicemail:['contacted','Left a voicemail',3],texted:['contacted','Texted the demo link',2],interested:['interested','Interested, follow up',1],declined:['declined','Not interested',0]};var m=map[kind];if(!m)return;var r=Object.assign({},l);r.status=m[0];r.last_touch=today();if(m[2]>0)r.next_touch=addDays(m[2]);if(kind==='declined')r.opt_out='yes';r.notes='['+today()+'] '+m[1]+(r.notes?'\n'+r.notes:'');r.updated_at=today();try{await save('Leads',r);CALL_MADE++;var idx=LEADS.indexOf(l);if(idx>=0)LEADS[idx]=Object.assign({},LEADS[idx],r);toast('Logged: '+m[1]);}catch(e){toast('Failed to log',1);return;}CALLI++;renderCall();}
+function callScriptToggle(){var p=document.getElementById('call-script');if(p)p.style.display=(p.style.display==='block')?'none':'block';}
+function callTimerToggle(){var b=document.getElementById('call-timer-btn');if(CALLTIMER){clearInterval(CALLTIMER);CALLTIMER=null;if(b)b.textContent='Start 25-min power hour';return;}CALLSECS=25*60;if(b)b.textContent='Stop timer';callTick();CALLTIMER=setInterval(callTick,1000);}
+function callTick(){var el=document.getElementById('call-timer');if(CALLSECS<=0){clearInterval(CALLTIMER);CALLTIMER=null;var b=document.getElementById('call-timer-btn');if(b)b.textContent='Start 25-min power hour';if(el)el.textContent='Done';toast('Power hour done, '+CALL_MADE+' logged');return;}var m=Math.floor(CALLSECS/60),s=CALLSECS%60;if(el)el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;CALLSECS--;}
+
+/* ---------- money math ---------- */
+function renderMoney(){var deals=live(DEALS);var probs={new:0.05,contacted:0.1,demo_sent:0.25,call_booked:0.4,proposal:0.6,won:1,lost:0};var mrr=0,weighted=0;deals.forEach(function(d){var st=String(d.stage||'').toLowerCase();var v=parseFloat(d.value)||0;if(st==='won'){mrr+=v;}else if(st!=='lost'){weighted+=v*(probs[st]!=null?probs[st]:0.1);}});var priceEl=document.getElementById('money-price');var price=priceEl?(parseFloat(priceEl.value)||1500):1500;if(price<100)price=100;var gap=Math.max(10000-mrr,0);var need=Math.ceil(gap/price);
+  var tiles=[['$'+mrr.toLocaleString(),'MRR now'],['$'+Math.round(weighted).toLocaleString(),'Weighted pipeline'],['$'+gap.toLocaleString(),'Gap to $10k'],[String(need),'Clients to close']];
+  var tl=document.getElementById('money-tiles');if(tl)tl.innerHTML=tiles.map(function(t,i){return '<div class="tile" style="animation-delay:'+(i*55)+'ms"><div class="n" style="font-size:22px">'+esc(t[0])+'</div><div class="l">'+t[1]+'</div></div>';}).join('');
+  var st=document.getElementById('money-statement');if(st)st.innerHTML='At <b>$'+price.toLocaleString()+'/mo</b> per client, you need <b>'+need+' more client'+(need===1?'':'s')+'</b> to hit $10k per month. That is it. Not a hundred. '+need+'.';
+  var miles=[['First paying client',Math.max(price,1)],['$2k per month',2000],['$5k per month',5000],['$10k per month',10000]];var mh='';miles.forEach(function(mi){var n=Math.max(Math.ceil((mi[1]-mrr)/price),0);mh+='<div class="mile"><span class="ml">'+mi[0]+'</span><span class="mr">'+(n===0?'done':(n+' client'+(n===1?'':'s')))+'</span></div>';});var mm=document.getElementById('money-miles');if(mm)mm.innerHTML=mh;
+  var why=document.getElementById('money-why');if(why)why.innerHTML='<p style="line-height:1.6">Ten clients changes everything: it funds the tools, proves the model, and buys the freedom to build this full time. You are not chasing a number, you are stewarding something real into existence.</p><p style="line-height:1.6;color:var(--muted);font-style:italic;margin-top:10px">Commit to the Lord whatever you do, and he will establish your plans. (Proverbs 16:3)</p><p style="margin-top:12px"><b style="color:var(--gold-light)">'+need+' yeses between you and $10k.</b> Go get the first one in Call Mode.</p>';
 }
 
 /* ---------- goal + focus ---------- */
@@ -934,6 +1078,9 @@ function paletteCommands(){return [
   {label:'Overview',hint:'Go',run:function(){tab('overview');}},
   {label:'Coach',hint:'Go',run:function(){tab('coach');}},
   {label:'Ask the coach',hint:'Action',run:function(){tab('coach');}},
+  {label:'Call Mode',hint:'Go',run:function(){tab('call');}},
+  {label:'Start calling',hint:'Action',run:function(){tab('call');}},
+  {label:'Money Math',hint:'Go',run:function(){tab('money');}},
   {label:'Insights',hint:'Go',run:function(){tab('insights');}},
   {label:'What is working',hint:'Learn',run:function(){tab('insights');}},
   {label:'CRM',hint:'Go',run:function(){tab('crm');}},
@@ -985,7 +1132,7 @@ async function loadAll(){
   if(leads===null){document.getElementById('banner').style.display='block';document.getElementById('upd').textContent='CRM not connected';document.getElementById('rows').innerHTML='<tr><td colspan="7" style="color:#DF5583">Attach the Google Sheets credential and re-toggle the workflow.</td></tr>';return;}
   LEADS=leads;refreshFilters();renderLeads();
   DEALS=(await getTab('Deals'))||[];TASKS=(await getTab('Tasks'))||[];NOTES=(await getTab('Notes'))||[];EVENTS=(await getTab('Events'))||[];
-  overview();renderDeals();renderTasks();renderNotes();renderCal();renderInsights();headcount();
+  overview();renderDeals();renderTasks();renderNotes();renderCal();renderInsights();renderMoney();headcount();
 }
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 loadAll();
