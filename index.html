@@ -445,27 +445,38 @@
       </div>
       <div class="call-card" id="call-card"></div>
       <div id="call-script">
-        <h4>Opener</h4>
-        Hi, is this [owner]? I will be quick. I saw [a specific detail about their shop]. Quick question: when you are on a job and the phone rings, what happens to that call?
-        <div class="q">Then:</div>
-        Most shops your size lose a few jobs a week to calls that ring out. I built something that answers your phone and books the job when you cannot pick up. Can I text you a free 30 second demo of it handling one of your calls?
-        <h4>If they say yes</h4>
-        Great, what is the best number? Sending now. Give it a listen and text me back what you think. If you like it, we grab 10 minutes.
-        <h4>Voicemail (if no answer)</h4>
-        Hi [owner], this is [your name] with Ambrosia. I build the thing that answers your phones and books the job when you are on a site, so you stop losing calls to voicemail. I will text you a 30 second demo, give it a listen when you get a sec. Talk soon.
+        <h4>First, the real fix (why you sound like a scam)</h4>
+        Their brain judges your tone before your words. Fast and hyped equals telemarketer, and they hang up in 3 seconds. Slow down. Drop your pitch lower. Sound relaxed and a little curious, like you are calling a buddy, not reading a script. End your ask like a calm statement, not an excited question. That one change beats any script.
+        <h4>Opener, pick one (pattern interrupt)</h4>
+        <div class="q">The honest one</div>
+        Hey [owner], you do not know me, and I will be straight with you, this is a cold call. You can hang up, or give me 20 seconds and then decide. Fair enough?
+        <div class="q">The question one</div>
+        Hey [owner], quick one. When your guys are out on a job and the phone rings, what usually happens to that call?
+        <div class="q">The local one</div>
+        Hey, I work with a couple plumbers here in Calgary and figured I would see if this even makes sense for you. Cool if I ask one quick thing?
+        <h4>The pain (say it like a fact, not a pitch)</h4>
+        Most shops miss about 1 in 4 calls when the crew is busy. And 8 out of 10 people who hit voicemail just hang up and call the next plumber. So every missed call is usually a booked job that went to someone else. For a lot of shops that is 50 grand a year walking out the door.
+        <h4>The ask (sell the demo, not the service)</h4>
+        I am not going to pitch you on the phone. Let me build you a free 30 second demo of it answering YOUR phone, in your shop's name. You listen, and if it is cool we grab 10 minutes. If not, no hard feelings. What is the best number to text it to?
         <h4>Objections</h4>
-        <div class="q">I am busy right now</div>
-        Totally, 20 seconds and I am gone. Can I just text you the demo and you look when you have a sec?
-        <div class="q">We already have voicemail or someone</div>
-        Makes sense. This is not voicemail, it actually answers, talks to the customer, and books the job so it does not go to the next shop. Worth 30 seconds to hear?
+        <div class="q">Is this a sales call</div>
+        Honestly, kind of. I build one thing and I think it fits you. 20 seconds and you decide, deal?
+        <div class="q">How did you get my number</div>
+        You are listed as [business], I am just calling local plumbers one by one. Totally fine to tell me to buzz off.
+        <div class="q">We already have voicemail</div>
+        Right, and 8 of 10 callers hang up on voicemail. This actually answers, talks to them, and books the job so it does not go to the next shop. Want to hear it take a call?
         <div class="q">How much is it</div>
-        Depends what you need, but it is a fraction of a receptionist and it never misses a call. Let me show you it working first, then price is easy.
-        <div class="q">Does it actually work</div>
-        Fair question. That is exactly why I want to send the demo instead of just telling you. Hear it take a call, then decide.
+        Way less than a receptionist and it never misses a call. Let me show it working first, then price is the easy part.
+        <div class="q">I am busy right now</div>
+        Totally, and that is kind of the point. 20 seconds, can I just text you the demo and you look later?
         <div class="q">Just send me an email</div>
-        Will do. What is the best address? I will also text the demo so you can hear it, that is the part that matters.
+        Will do, what is the best address? I will also text the demo so you can hear it, that is the part that matters.
         <div class="q">Not interested</div>
         No worries, appreciate your time. If you ever get slammed and start missing calls, I am here. God bless.
+        <h4>Voicemail (if no answer)</h4>
+        Hi [owner], this is [your name] with Ambrosia. I build the thing that answers your phones and books the job when your crew is on a site, so you stop losing calls to the next guy. I will text you a 30 second demo, give it a listen. Talk soon.
+        <h4>Do not</h4>
+        Do not open with "how are you today". Do not rattle a script fast. Do not pitch price or features in the first 30 seconds. Do not sound hyped. Be a calm human who found a real problem.
       </div>
     </div>
   </section>
@@ -915,7 +926,7 @@ function callSkip(){CALLI++;renderCall();}
 async function callLog(kind){var l=CALLQ[CALLI];if(!l)return;var map={noanswer:['contacted','Called, no answer',2],voicemail:['contacted','Left a voicemail',3],texted:['contacted','Texted the demo link',2],interested:['interested','Interested, follow up',1],declined:['declined','Not interested',0]};var m=map[kind];if(!m)return;var r=Object.assign({},l);r.status=m[0];r.last_touch=today();if(m[2]>0)r.next_touch=addDays(m[2]);if(kind==='declined')r.opt_out='yes';r.notes='['+today()+'] '+m[1]+(r.notes?'\n'+r.notes:'');r.updated_at=today();try{await save('Leads',r);CALL_MADE++;var idx=LEADS.indexOf(l);if(idx>=0)LEADS[idx]=Object.assign({},LEADS[idx],r);toast('Logged: '+m[1]);}catch(e){toast('Failed to log',1);return;}if(kind==='noanswer'){renderNoAnswer(l);}else{CALLI++;renderCall();}}
 function callAdvance(){CALLI++;renderCall();}
 function renderNoAnswer(l){var card=document.getElementById('call-card');if(!card)return;var phone=String(l.phone||'').replace(/[^0-9+]/g,'');var demo=demoLink(l.business_name,l.city,l.contact_first,l.niche);var sms='Hey '+(l.contact_first||'there')+', tried giving '+(l.business_name||'you')+' a call. I built a 30 second AI receptionist that answers your phones and books the job when you cannot pick up, want to hear it take a call? '+demo;var h='<div class="call-meta">No answer logged</div>';h+='<div class="call-name" style="font-size:22px">'+esc(l.business_name||'Lead')+'</div>';h+='<div class="call-sub">Do not leave it a dead end. Text the demo so they still hear it.</div>';h+='<div class="call-actions">';if(phone)h+='<a class="cbtn primary" href="sms:'+phone+'?&body='+encodeURIComponent(sms)+'">Text the demo</a>';h+='<button class="cbtn" type="button" onclick="callAdvance()">Next lead</button>';h+='</div>';card.innerHTML=h;callProgress();}
-function callScriptToggle(){var p=document.getElementById('call-script');if(p)p.style.display=(p.style.display==='block')?'none':'block';}
+function callScriptToggle(){var p=document.getElementById('call-script');if(!p)return;var show=(p.style.display!=='block');p.style.display=show?'block':'none';if(show)setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'start'});},40);}
 function callTimerToggle(){var b=document.getElementById('call-timer-btn');if(CALLTIMER){clearInterval(CALLTIMER);CALLTIMER=null;if(b)b.textContent='Start 25-min power hour';return;}CALLSECS=25*60;if(b)b.textContent='Stop timer';callTick();CALLTIMER=setInterval(callTick,1000);}
 function callTick(){var el=document.getElementById('call-timer');if(CALLSECS<=0){clearInterval(CALLTIMER);CALLTIMER=null;var b=document.getElementById('call-timer-btn');if(b)b.textContent='Start 25-min power hour';if(el)el.textContent='Done';toast('Power hour done, '+CALL_MADE+' logged');return;}var m=Math.floor(CALLSECS/60),s=CALLSECS%60;if(el)el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;CALLSECS--;}
 
