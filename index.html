@@ -291,6 +291,32 @@
     .cmdk{padding-top:9vh}
   }
   @media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
+  /* coach */
+  .coach{max-width:820px;margin:0 auto;display:flex;flex-direction:column;height:calc(100vh - 230px);min-height:400px}
+  .coach-thread{flex:1;overflow-y:auto;padding:6px 2px 14px;display:flex;flex-direction:column;gap:13px}
+  .coach-empty{margin:auto;text-align:center;color:var(--muted);max-width:440px;padding:20px}
+  .coach-empty .qt{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:8px}
+  .msg{display:flex;gap:10px;max-width:90%}
+  .msg .av{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;margin-top:2px}
+  .msg.me{align-self:flex-end;flex-direction:row-reverse}
+  .msg.me .av{background:var(--surface3);color:var(--gold-light);border:1px solid var(--border2)}
+  .msg.ai .av{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#161610}
+  .msg .bub{padding:11px 15px;border-radius:14px;font-size:14.5px;line-height:1.52;word-wrap:break-word;overflow-wrap:anywhere}
+  .msg.me .bub{background:var(--surface3);border:1px solid var(--border2);border-bottom-right-radius:4px}
+  .msg.ai .bub{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
+  .msg .bub p{margin:0 0 8px}.msg .bub p:last-child{margin:0}
+  .msg .bub ul{margin:4px 0 8px;padding-left:18px}.msg .bub li{margin:3px 0}
+  .msg .bub strong{color:var(--gold-light)}
+  .msg .bub code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--surface3);padding:1px 5px;border-radius:4px}
+  .msg.ai .bub.think{color:var(--muted);font-style:italic}
+  .coach-chips{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 4px}
+  .coach-chips button{background:var(--surface);border:1px solid var(--border2);color:var(--gold-light);padding:8px 13px;border-radius:20px;font-size:12.5px;cursor:pointer;transition:all .15s var(--ease)}
+  .coach-chips button:hover{border-color:var(--gold);background:var(--surface3)}
+  .coach-input{display:flex;gap:10px;align-items:flex-end;border-top:1px solid var(--border);padding-top:12px}
+  .coach-input textarea{flex:1;background:var(--surface);border:1px solid var(--border2);color:var(--text);border-radius:12px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:14.5px;resize:none;max-height:160px;line-height:1.45}
+  .coach-input textarea:focus{outline:none;border-color:var(--gold)}
+  .coach-input .act{flex:none;min-height:46px}
+  @media(max-width:720px){.coach{height:calc(100vh - 190px)}.msg{max-width:95%}}
 </style>
 </head>
 <body>
@@ -298,6 +324,7 @@
   <div class="side-top"><span class="side-logo">A</span><button class="side-toggle" onclick="toggleSidebar()" title="Expand / collapse" id="side-toggle">&#8249;</button></div>
   <nav class="side-nav" id="tabs">
     <button data-t="overview" class="on"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg><span class="lbl">Overview</span></button>
+    <button data-t="coach"><svg viewBox="0 0 16 16"><path d="M2.5 3h11v8h-6l-3 2.5V11h-2z"/></svg><span class="lbl">Coach</span></button>
     <button data-t="crm"><svg viewBox="0 0 16 16"><circle cx="8" cy="5.2" r="2.6"/><path d="M2.5 13.5c0-3 2.7-4.2 5.5-4.2s5.5 1.2 5.5 4.2"/></svg><span class="lbl">CRM</span></button>
     <button data-t="pipeline"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="3" height="10"/><rect x="6.5" y="3" width="3" height="7"/><rect x="11" y="3" width="3" height="5"/></svg><span class="lbl">Pipeline</span></button>
     <button data-t="tasks"><svg viewBox="0 0 16 16"><path d="M3 8.2l3 3 7-7"/></svg><span class="lbl">Tasks</span></button>
@@ -350,6 +377,22 @@
     <div class="grid2">
       <div class="card"><h3>Status breakdown</h3><div class="hint">All leads by stage</div><div id="c-status"></div></div>
       <div class="card"><h3>Leads by city</h3><div class="hint">Geographic spread</div><div id="c-city"></div></div>
+    </div>
+  </section>
+
+  <!-- COACH -->
+  <section class="page" id="p-coach">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Coach</h2><div class="hint">Your Ambrosia strategist. It knows your leads, pipeline, and the $10k goal.</div></div></div>
+      <button class="ghost" onclick="coachReset()">New chat</button>
+    </div>
+    <div class="coach">
+      <div class="coach-thread" id="coach-thread"></div>
+      <div class="coach-chips" id="coach-chips"></div>
+      <div class="coach-input">
+        <textarea id="coach-text" rows="1" placeholder="Ask your coach…  (Enter to send, Shift+Enter for a new line)"></textarea>
+        <button class="act" id="coach-send" onclick="coachSend()">Send</button>
+      </div>
     </div>
   </section>
 
@@ -518,7 +561,7 @@ const TASKSTAGES=['todo','doing','done'];
 let LEADS=[],DEALS=[],TASKS=[],NOTES=[],EVENTS=[];
 let calY,calM,calView;
 var ME=(function(){try{return localStorage.getItem('ambrosia_me')||'Avery';}catch(e){return 'Avery';}})();
-function setMe(v){ME=v;try{localStorage.setItem('ambrosia_me',v);}catch(e){}overview();renderLeads();toast('You are: '+v);}
+function setMe(v){ME=v;try{localStorage.setItem('ambrosia_me',v);}catch(e){}overview();renderLeads();coachLoad();coachRender();toast('You are: '+v);}
 
 const FORMDEFS={
   Leads:[
@@ -583,7 +626,7 @@ function stageOf(st){st=String(st||'').toLowerCase();
 function demoLink(biz,city,owner,niche){return DEMO+'?biz='+encodeURIComponent(biz||'')+'&city='+encodeURIComponent(city||'Calgary')+'&owner='+encodeURIComponent(owner||'there')+(niche?'&type='+encodeURIComponent(niche):'');}
 function animateNum(el,to,suffix){if(!el)return;to=parseInt(to,10)||0;var t0=null;function step(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/650,1);var v=Math.round((0.5-Math.cos(p*Math.PI)/2)*to);el.textContent=v+(suffix||'');if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
-function tab(name){document.querySelectorAll('nav.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();window.scrollTo({top:0,behavior:'smooth'});}
+function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();window.scrollTo({top:0,behavior:'smooth'});}
 document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t){tab(b.dataset.t);closeSide();}});
 function toggleSidebar(){var ex=!document.body.classList.contains('side-expanded');document.body.classList.toggle('side-expanded',ex);var t=document.getElementById('side-toggle');if(t)t.innerHTML=ex?'‹':'›';try{localStorage.setItem('ambrosia_side',ex?'1':'0');}catch(e){}}
 function openSide(){document.body.classList.add('side-open');}
@@ -770,10 +813,63 @@ function newEventOn(ds){openEditor('Events',null);var f=document.getElementById(
 async function genLeads(){var btn=document.getElementById('gl-btn'),st=document.getElementById('gl-status');btn.disabled=true;st.className='status';st.textContent='Claude is searching the web for real '+gv('gl-niche')+' businesses… ~30-60s.';try{var body={niche:gv('gl-niche'),city:gv('gl-city'),count:parseInt(gv('gl-count'),10)||12};var r=await fetch(API+'/ops-genleads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});var d=await r.json();if(d&&d.added!=null){st.className='status ok';st.textContent='Added '+d.added+' new leads to your CRM.';toast('Added '+d.added+' leads');}else{st.textContent='Done. Refreshing…';}await reloadTab('Leads');}catch(e){st.textContent='Failed. Check the Anthropic key + Google credential and that the workflow is active.';}btn.disabled=false;}
 function buildDemo(){var el=document.getElementById('d-link');var url=demoLink(gv('d-biz'),gv('d-city'),gv('d-owner'),gv('d-type'));el.style.display='block';el.innerHTML='<a href="'+esc(url)+'" target="_blank">'+esc(url)+'</a>';var s=document.getElementById('d-status');if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){s.className='status ok';s.textContent='Link copied to clipboard.';},function(){});}}
 
+/* ---------- coach ---------- */
+var COACH_MSGS=[];var COACH_BUSY=false;
+var COACH_CHIPS=["What's my next move?","Should I raise my price?","Push me to make calls","Who do I owe a follow-up?"];
+function coachKey(){return 'ambrosia_coach_'+ME;}
+function coachLoad(){try{var raw=localStorage.getItem(coachKey());COACH_MSGS=raw?JSON.parse(raw):[];}catch(e){COACH_MSGS=[];}if(!Array.isArray(COACH_MSGS))COACH_MSGS=[];}
+function coachSave(){try{localStorage.setItem(coachKey(),JSON.stringify(COACH_MSGS.slice(-40)));}catch(e){}}
+function coachReset(){COACH_MSGS=[];coachSave();coachRender();var t=document.getElementById('coach-text');if(t)t.focus();}
+function mdLite(s){s=esc(s);
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  var lines=s.split(/\n/);var out='';var inUl=false;
+  for(var i=0;i<lines.length;i++){var ln=lines[i];var m=ln.match(/^\s*[-*•]\s+(.*)$/);
+    if(m){if(!inUl){out+='<ul>';inUl=true;}out+='<li>'+m[1]+'</li>';}
+    else{if(inUl){out+='</ul>';inUl=false;}if(ln.trim())out+='<p>'+ln+'</p>';}
+  }
+  if(inUl)out+='</ul>';
+  return out;
+}
+function coachRender(){
+  var thread=document.getElementById('coach-thread');var chips=document.getElementById('coach-chips');if(!thread)return;
+  if(!COACH_MSGS.length){
+    thread.innerHTML='<div class="coach-empty"><div class="qt">Hey '+esc(ME)+'.</div><div>I know your leads, your pipeline, and the $10k goal. Ask me what to do next, run a decision by me, or tell me to get you moving.</div></div>';
+  } else {
+    thread.innerHTML=COACH_MSGS.map(function(m){var isMe=m.role==='user';return '<div class="msg '+(isMe?'me':'ai')+'"><div class="av">'+(isMe?esc(ME.slice(0,1)):'A')+'</div><div class="bub">'+(isMe?esc(m.content).replace(/\n/g,'<br>'):mdLite(m.content))+'</div></div>';}).join('');
+  }
+  if(COACH_BUSY){thread.innerHTML+='<div class="msg ai" id="coach-typing"><div class="av">A</div><div class="bub think">Thinking…</div></div>';}
+  if(chips){chips.innerHTML=COACH_MSGS.length?'':COACH_CHIPS.map(function(c,i){return '<button onclick="coachChip('+i+')">'+esc(c)+'</button>';}).join('');}
+  thread.scrollTop=thread.scrollHeight;
+}
+function coachChip(i){var c=COACH_CHIPS[i];var t=document.getElementById('coach-text');if(t)t.value=c;coachSend();}
+function coachOpen(){coachLoad();coachRender();setTimeout(function(){var t=document.getElementById('coach-text');if(t)t.focus();},60);}
+async function coachSend(){
+  if(COACH_BUSY)return;
+  var t=document.getElementById('coach-text');var txt=(t?t.value:'').trim();if(!txt)return;
+  t.value='';t.style.height='auto';
+  COACH_MSGS.push({role:'user',content:txt});coachSave();COACH_BUSY=true;coachRender();
+  try{
+    var r=await fetch(API+'/ops-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:COACH_MSGS.slice(-24),me:ME})});
+    var d=await r.json();var reply=(d&&(d.reply||d.text))||'';
+    if(!reply)throw new Error('empty');
+    COACH_MSGS.push({role:'assistant',content:reply});coachSave();
+  }catch(e){
+    COACH_MSGS.push({role:'assistant',content:'I could not reach the coach service. Make sure the "Ambrosia — Coach" workflow is active in n8n, then try again.'});
+  }
+  COACH_BUSY=false;coachRender();
+}
+(function(){var t=document.getElementById('coach-text');if(!t)return;
+  t.addEventListener('input',function(){t.style.height='auto';t.style.height=Math.min(t.scrollHeight,160)+'px';});
+  t.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();coachSend();}});
+})();
+
 /* ---------- command palette ---------- */
 var palIdx=0,palItems=[];
 function paletteCommands(){return [
   {label:'Overview',hint:'Go',run:function(){tab('overview');}},
+  {label:'Coach',hint:'Go',run:function(){tab('coach');}},
+  {label:'Ask the coach',hint:'Action',run:function(){tab('coach');}},
   {label:'CRM',hint:'Go',run:function(){tab('crm');}},
   {label:'Pipeline',hint:'Go',run:function(){tab('pipeline');}},
   {label:'Tasks',hint:'Go',run:function(){tab('tasks');}},
