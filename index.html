@@ -854,6 +854,7 @@ async function coachSend(){
     var d=await r.json();var reply=(d&&(d.reply||d.text))||'';
     if(!reply)throw new Error('empty');
     COACH_MSGS.push({role:'assistant',content:reply});coachSave();
+    if(d&&d.actions&&d.actions.length){try{await loadAll();}catch(e2){}toast(d.actions.length+' change'+(d.actions.length===1?'':'s')+' saved');}
   }catch(e){
     COACH_MSGS.push({role:'assistant',content:'I could not reach the coach service. Make sure the "Ambrosia — Coach" workflow is active in n8n, then try again.'});
   }
