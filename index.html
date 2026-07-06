@@ -334,6 +334,7 @@
   .call-meta{color:var(--gold);letter-spacing:2px;font-size:11px;text-transform:uppercase}
   .call-name{font-family:'Playfair Display',serif;font-size:28px;margin:6px 0 2px}
   .call-sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+  .call-hook{background:var(--surface2);border-left:2px solid var(--gold);padding:9px 12px;border-radius:0 8px 8px 0;font-size:13px;color:var(--gold-light);font-style:italic;margin:0 0 16px;text-align:left;line-height:1.45}
   .call-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px}
   .cbtn{display:inline-flex;align-items:center;gap:6px;padding:13px 18px;border-radius:12px;border:1px solid var(--border2);background:var(--surface3);color:var(--text);font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s var(--ease);min-height:48px}
   .cbtn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#161610;border-color:transparent}
@@ -450,6 +451,8 @@
         Most shops your size lose a few jobs a week to calls that ring out. I built something that answers your phone and books the job when you cannot pick up. Can I text you a free 30 second demo of it handling one of your calls?
         <h4>If they say yes</h4>
         Great, what is the best number? Sending now. Give it a listen and text me back what you think. If you like it, we grab 10 minutes.
+        <h4>Voicemail (if no answer)</h4>
+        Hi [owner], this is [your name] with Ambrosia. I build the thing that answers your phones and books the job when you are on a site, so you stop losing calls to voicemail. I will text you a 30 second demo, give it a listen when you get a sec. Talk soon.
         <h4>Objections</h4>
         <div class="q">I am busy right now</div>
         Totally, 20 seconds and I am gone. Can I just text you the demo and you look when you have a sec?
@@ -882,6 +885,7 @@ var VERSES=[
  'I can do all this through him who gives me strength. (Philippians 4:13)'
 ];
 var CALLQ=[],CALLI=0,CALL_MADE=0,CALLTIMER=null,CALLSECS=0;
+function leadHook(l){var n=String(l.notes||'').split('\n');for(var i=0;i<n.length;i++){var ln=n[i].trim();if(ln&&ln.charAt(0)!=='[')return ln;}return '';}
 function buildCallQueue(){var td=today();var stop={won:1,lost:1,declined:1,suppressed:1};var due=live(LEADS).filter(function(l){var s=String(l.status||'').toLowerCase();if(stop[s])return false;var nt=String(l.next_touch||'').slice(0,10);return nt&&nt<=td&&mine(l);});due.sort(function(a,b){return String(a.next_touch)<String(b.next_touch)?-1:1;});var fresh=live(LEADS).filter(function(l){return String(l.status||'new').toLowerCase()==='new'&&mine(l)&&String(l.phone||'').replace(/[^0-9+]/g,'');});CALLQ=due.concat(fresh);}
 function callOpen(){buildCallQueue();CALLI=0;CALL_MADE=0;renderCall();}
 function callProgress(){var p=document.getElementById('call-progress');if(p)p.textContent=(CALLQ.length?('Lead '+Math.min(CALLI+1,CALLQ.length)+' of '+CALLQ.length):'No leads queued')+' · '+CALL_MADE+' logged';}
@@ -891,6 +895,7 @@ function renderCall(){var v=VERSES[(new Date()).getDate()%VERSES.length];var vel
   var h='<div class="call-meta">'+esc(why)+(l.city?' · '+esc(l.city):'')+'</div>';
   h+='<div class="call-name">'+esc(l.business_name||'Lead')+'</div>';
   h+='<div class="call-sub">'+esc((l.contact_first?l.contact_first:'')+(l.contact_first&&l.phone?' · ':'')+(l.phone||''))+'</div>';
+  var hook=leadHook(l);if(hook)h+='<div class="call-hook">Open with: '+esc(hook)+'</div>';
   h+='<div class="call-actions">';
   if(phone){h+='<a class="cbtn primary" href="tel:'+phone+'">Call</a>';h+='<a class="cbtn" href="sms:'+phone+'?&body='+encodeURIComponent(sms)+'">Text demo</a>';}
   else{h+='<span class="call-nophone">No phone on file. Skip or add one in the CRM.</span>';}
@@ -907,7 +912,9 @@ function renderCall(){var v=VERSES[(new Date()).getDate()%VERSES.length];var vel
   card.innerHTML=h;callProgress();}
 function callCopyDemo(){var l=window._callDemo||'';if(navigator.clipboard)navigator.clipboard.writeText(l).then(function(){toast('Demo link copied');});else toast(l);}
 function callSkip(){CALLI++;renderCall();}
-async function callLog(kind){var l=CALLQ[CALLI];if(!l)return;var map={noanswer:['contacted','Called, no answer',2],voicemail:['contacted','Left a voicemail',3],texted:['contacted','Texted the demo link',2],interested:['interested','Interested, follow up',1],declined:['declined','Not interested',0]};var m=map[kind];if(!m)return;var r=Object.assign({},l);r.status=m[0];r.last_touch=today();if(m[2]>0)r.next_touch=addDays(m[2]);if(kind==='declined')r.opt_out='yes';r.notes='['+today()+'] '+m[1]+(r.notes?'\n'+r.notes:'');r.updated_at=today();try{await save('Leads',r);CALL_MADE++;var idx=LEADS.indexOf(l);if(idx>=0)LEADS[idx]=Object.assign({},LEADS[idx],r);toast('Logged: '+m[1]);}catch(e){toast('Failed to log',1);return;}CALLI++;renderCall();}
+async function callLog(kind){var l=CALLQ[CALLI];if(!l)return;var map={noanswer:['contacted','Called, no answer',2],voicemail:['contacted','Left a voicemail',3],texted:['contacted','Texted the demo link',2],interested:['interested','Interested, follow up',1],declined:['declined','Not interested',0]};var m=map[kind];if(!m)return;var r=Object.assign({},l);r.status=m[0];r.last_touch=today();if(m[2]>0)r.next_touch=addDays(m[2]);if(kind==='declined')r.opt_out='yes';r.notes='['+today()+'] '+m[1]+(r.notes?'\n'+r.notes:'');r.updated_at=today();try{await save('Leads',r);CALL_MADE++;var idx=LEADS.indexOf(l);if(idx>=0)LEADS[idx]=Object.assign({},LEADS[idx],r);toast('Logged: '+m[1]);}catch(e){toast('Failed to log',1);return;}if(kind==='noanswer'){renderNoAnswer(l);}else{CALLI++;renderCall();}}
+function callAdvance(){CALLI++;renderCall();}
+function renderNoAnswer(l){var card=document.getElementById('call-card');if(!card)return;var phone=String(l.phone||'').replace(/[^0-9+]/g,'');var demo=demoLink(l.business_name,l.city,l.contact_first,l.niche);var sms='Hey '+(l.contact_first||'there')+', tried giving '+(l.business_name||'you')+' a call. I built a 30 second AI receptionist that answers your phones and books the job when you cannot pick up, want to hear it take a call? '+demo;var h='<div class="call-meta">No answer logged</div>';h+='<div class="call-name" style="font-size:22px">'+esc(l.business_name||'Lead')+'</div>';h+='<div class="call-sub">Do not leave it a dead end. Text the demo so they still hear it.</div>';h+='<div class="call-actions">';if(phone)h+='<a class="cbtn primary" href="sms:'+phone+'?&body='+encodeURIComponent(sms)+'">Text the demo</a>';h+='<button class="cbtn" type="button" onclick="callAdvance()">Next lead</button>';h+='</div>';card.innerHTML=h;callProgress();}
 function callScriptToggle(){var p=document.getElementById('call-script');if(p)p.style.display=(p.style.display==='block')?'none':'block';}
 function callTimerToggle(){var b=document.getElementById('call-timer-btn');if(CALLTIMER){clearInterval(CALLTIMER);CALLTIMER=null;if(b)b.textContent='Start 25-min power hour';return;}CALLSECS=25*60;if(b)b.textContent='Stop timer';callTick();CALLTIMER=setInterval(callTick,1000);}
 function callTick(){var el=document.getElementById('call-timer');if(CALLSECS<=0){clearInterval(CALLTIMER);CALLTIMER=null;var b=document.getElementById('call-timer-btn');if(b)b.textContent='Start 25-min power hour';if(el)el.textContent='Done';toast('Power hour done, '+CALL_MADE+' logged');return;}var m=Math.floor(CALLSECS/60),s=CALLSECS%60;if(el)el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;CALLSECS--;}
