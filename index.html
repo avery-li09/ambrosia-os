@@ -230,7 +230,44 @@
   .rowbtn.danger:hover{border-color:var(--danger)}
   th input,td input[type=checkbox]{accent-color:var(--gold);cursor:pointer}
   .import-ta{width:100%;min-height:170px;font-family:'JetBrains Mono',monospace;font-size:12px}
-  @media(max-width:860px){.stats{grid-template-columns:repeat(3,1fr)}.grid2,.hero{grid-template-columns:1fr}.drawer{width:100vw}}
+  @media(max-width:860px){.grid2,.hero{grid-template-columns:1fr}.drawer{width:100vw}}
+  @media(max-width:720px){
+    body{font-size:15px}
+    .wrap{padding:calc(16px + env(safe-area-inset-top)) 14px calc(100px + env(safe-area-inset-bottom))}
+    header.top{align-items:flex-start}
+    .brand h1{font-size:25px}
+    .htools{width:100%;margin-top:14px}
+    .cmdk-trigger{flex:1;justify-content:center;padding:12px}
+    .cmdk-trigger kbd{display:none}
+    .badge{display:none}
+    .accent{margin-top:14px}
+    nav.tabs{position:fixed;top:auto;bottom:0;left:0;right:0;margin:0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start;border-top:1px solid var(--border2);border-bottom:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom));gap:0;background:rgba(8,8,7,.97);z-index:60;backdrop-filter:blur(12px)}
+    nav.tabs::-webkit-scrollbar{display:none}
+    nav.tabs button{flex-direction:column;gap:4px;font-size:9.5px;letter-spacing:.02em;padding:6px 14px;min-width:64px}
+    nav.tabs button svg{width:21px;height:21px;opacity:.7}
+    nav.tabs button.on::after{top:-7px;bottom:auto;left:16px;right:16px}
+    .stats{grid-template-columns:repeat(2,1fr);gap:10px}
+    .tile{padding:16px 15px}
+    .tile .n{font-size:25px}
+    .card{padding:18px}
+    .goal .gfig{font-size:30px}
+    .modhead{margin-bottom:15px;gap:10px}
+    .modhead h2{font-size:20px}
+    .filters{gap:8px}
+    .filters #f-search{flex:1 1 100%}
+    .filters select{flex:1 1 28%;min-width:0}
+    .drawer .drow{flex-direction:column;gap:0}
+    .drawer .dbody{padding:12px 20px 40px}
+    .qbtn{padding:12px 8px;font-size:13px}
+    .cal .day{min-height:62px;padding:5px}
+    .cal .ev{font-size:9px}
+    .board{grid-auto-columns:minmax(212px,1fr)}
+    td,th{padding:13px 12px}
+    input,select,textarea{padding:12px 13px;font-size:16px}
+    button.add,button.act,.dactions .save{padding:13px 18px}
+    .cmdk{padding-top:9vh}
+  }
+  @media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}nav.tabs button{min-width:60px;padding:6px 11px}}
 </style>
 </head>
 <body>
