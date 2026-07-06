@@ -504,7 +504,7 @@
     <div class="modhead">
       <div class="htitle"><div class="tick"></div><div><h2>Money Math</h2><div class="hint">The $10k goal in real numbers, not vibes.</div></div></div>
     </div>
-    <div class="money-price">Average price per client: $ <input id="money-price" type="number" value="1500" min="100" step="100" onchange="renderMoney()"> per month</div>
+    <div class="money-price">Average price per client: $ <input id="money-price" type="number" value="1500" min="100" step="100" oninput="renderMoney()" onchange="renderMoney()"> per month</div>
     <div class="stats" id="money-tiles"></div>
     <div class="hero">
       <div class="card"><h3>The math</h3><div class="hint">What it takes to get there</div><div class="money-statement" id="money-statement"></div><div id="money-miles"></div></div>
