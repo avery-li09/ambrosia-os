@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ambrosia — Call Card</title>
+<meta name="theme-color" content="#080807">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Call Card">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080807;--surface:#131312;--surface2:#0E0E0D;--surface3:#1A1A18;
+    --gold:#C9A84C;--gold-light:#E8D5A3;--gold-deep:#8A6E28;--text:#F5F5F0;--muted:#8A8A82;
+    --border:#201F1C;--border2:#2C2B27;--green:#2FA79E;--red:#DF5583;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1000px 460px at 50% -240px,rgba(201,168,76,.10),transparent 70%);background-attachment:fixed;
+    max-width:640px;margin:0 auto;padding:22px 16px 70px;-webkit-text-size-adjust:100%}
+  ::selection{background:var(--gold);color:#080807}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+  .logo{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;color:var(--gold);letter-spacing:.02em}
+  .refresh{background:none;border:1px solid var(--border2);color:var(--muted);font-size:11px;padding:7px 11px;cursor:pointer;font-family:'Inter'}
+  .refresh:active{color:var(--gold);border-color:var(--gold)}
+  h1{font-family:'Playfair Display',serif;font-weight:700;font-size:26px;letter-spacing:-.4px;margin-top:2px}
+  .status{color:var(--muted);font-size:12.5px;margin:2px 0 18px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;vertical-align:middle}
+  .rule{background:linear-gradient(150deg,var(--surface3),var(--surface));border:1px solid var(--border2);border-left:3px solid var(--gold);padding:15px 16px;margin-bottom:14px}
+  h2{font-family:'Playfair Display',serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:26px 0 10px;font-weight:600}
+  .card{background:var(--surface);border:1px solid var(--border);padding:16px;margin-bottom:11px}
+  .say{font-size:16px;line-height:1.55}
+  .label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 6px}
+  .pick{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+  ul{margin:4px 0 0;padding-left:19px}
+  li{margin:7px 0}
+  .big{font-weight:700;color:var(--gold-light);font-family:'JetBrains Mono',monospace}
+  .green{color:var(--gold-light)}
+  /* counters */
+  .counters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+  .ctr{background:var(--surface2);border:1px solid var(--border);border-top:2px solid var(--gold);padding:14px 15px;text-align:center}
+  .ctr .n{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .ctr .n small{font-size:14px;color:var(--muted);font-family:'Inter'}
+  .ctr .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .logrow{display:flex;gap:9px;margin:10px 0 4px}
+  .logbtn{flex:1;background:var(--surface3);border:1px solid var(--border2);color:var(--text);font-family:'Inter';font-size:14px;font-weight:600;padding:14px;cursor:pointer;transition:border-color .15s,color .15s}
+  .logbtn:active{transform:translateY(1px)}
+  .logbtn.gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807}
+  .directive{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);padding:14px 15px;margin-bottom:16px;white-space:pre-wrap;font-size:14.5px}
+  /* call list */
+  .call-item{background:var(--surface);border:1px solid var(--border);padding:13px 14px;margin-bottom:9px;transition:opacity .25s}
+  .call-item.done{opacity:.42}
+  .call-item .biz{font-weight:600;font-size:15px}
+  .call-item .ph{color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:1px}
+  .call-btns{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+  .cbtn{flex:1;min-width:84px;text-align:center;text-decoration:none;font-size:13px;font-weight:600;padding:11px 8px;cursor:pointer;border:1px solid var(--border2);color:var(--text);background:var(--surface3);font-family:'Inter'}
+  .cbtn.call{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807}
+  .cbtn.book{border-color:var(--gold-deep);color:var(--gold-light)}
+  details{background:var(--surface);border:1px solid var(--border);padding:0 14px;margin-bottom:8px}
+  details[open]{background:var(--surface3)}
+  summary{cursor:pointer;padding:13px 0;font-weight:600;list-style:none;outline:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"›";color:var(--gold);font-weight:700;margin-right:10px;display:inline-block}
+  details[open] summary::before{content:"⌄"}
+  details p{margin:0 0 14px;color:var(--text)}
+  .dont li{color:#e39a8f}
+  .demo-btn{display:block;width:100%;text-align:center;background:none;border:1px solid var(--gold-deep);color:var(--gold-light);font-family:'Inter';font-size:14px;font-weight:600;padding:13px;cursor:pointer;text-decoration:none}
+  footer{color:var(--muted);font-size:12px;margin-top:32px;text-align:center;line-height:1.8}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--gold-deep);color:var(--gold-light);padding:11px 18px;font-size:13px;transition:transform .25s;z-index:50;max-width:90%}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+  .load{text-align:center;color:var(--muted);padding:60px 0;font-size:14px}
+</style>
+</head>
+<body>
+<div id="app"><div class="load">Loading your card…</div></div>
+<div class="toast" id="toast"></div>
+<script>
+var API='https://n8n.ambrosia-ai.org/webhook';
+var EMP=null;
+function qp(k){try{return new URLSearchParams(location.search).get(k);}catch(e){return null;}}
+var EID=qp('e')||'emp_tej';
+function td(){return new Date().toISOString().slice(0,10);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='toast on';clearTimeout(t._h);t._h=setTimeout(function(){t.className='toast';},2400);}
+function fresh(){return String(EMP.last_active||'').slice(0,10)===td();}
+function dials(){return fresh()?(parseInt(EMP.dials_today,10)||0):0;}
+function demos(){return fresh()?(parseInt(EMP.demos_today,10)||0):0;}
+function lines(){return String(EMP.call_list||'').split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
+function parseLine(s){var i=s.lastIndexOf(',');if(i<0){var m=s.match(/[0-9][0-9\-\s().+]{6,}/);if(m)return{name:s.replace(m[0],'').trim()||'Lead',phone:m[0].trim()};return{name:s,phone:''};}return{name:s.slice(0,i).trim(),phone:s.slice(i+1).trim()};}
+
+async function load(){
+  try{
+    var r=await fetch(API+'/ops-data?tab=Employees&cb='+Date.now());
+    var d=await r.json();var rows=Array.isArray(d)?d:(d.data||[]);
+    EMP=rows.filter(function(x){return x&&String(x.id)===EID;})[0]
+       ||rows.filter(function(x){return x&&String(x.name||'').toLowerCase()==='tej';})[0]
+       ||null;
+  }catch(e){EMP=null;}
+  if(!EMP){document.getElementById('app').innerHTML='<div class="load">Couldn\'t load your card.<br><br>Ask Avery to send you your link again, then reload.</div>';return;}
+  if(!fresh()){EMP.dials_today=0;EMP.demos_today=0;}
+  render();
+}
+async function bump(kind){
+  if(!fresh()){EMP.dials_today=0;EMP.demos_today=0;EMP.last_active=td();}
+  EMP.dials_today=(parseInt(EMP.dials_today,10)||0)+1;
+  if(kind==='demo')EMP.demos_today=(parseInt(EMP.demos_today,10)||0)+1;
+  EMP.last_active=td();EMP.updated_at=td();
+  paintCounters();
+  toast(kind==='demo'?'Demo booked. Nice.':'Dial logged.');
+  try{await fetch(API+'/ops-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tab:'Employees',row:EMP})});}catch(e){}
+}
+function markRow(el,kind){bump(kind);var row=el.closest('.call-item');if(row)row.classList.add('done');}
+function paintCounters(){
+  var dn=document.getElementById('d-num');if(dn){var tgt=parseInt(EMP.target_dials,10)||0;dn.innerHTML=dials()+(tgt?' <small>/ '+tgt+'</small>':'');}
+  var mn=document.getElementById('m-num');if(mn)mn.textContent=demos();
+}
+
+function render(){
+  var noun=String(EMP.niche||'plumbing').trim();var nounShop=noun.replace(/ing$/,'')+'s';
+  var on=String(EMP.active||'yes').toLowerCase()!=='no';
+  var demoUrl=String(EMP.demo_url||'').trim();
+  var h='';
+  h+='<div class="top"><span class="logo">Ambrosia</span><button class="refresh" onclick="load()">↻ Refresh</button></div>';
+  h+='<h1>Hey '+esc(EMP.name||'there')+' 👋</h1>';
+  h+='<div class="status"><span class="dot" style="background:'+(on?'#2FA79E':'#8A8A82')+'"></span>'+(on?'You\'re calling ':'Paused — ')+esc(noun)+' in '+esc(EMP.city||'your area')+'</div>';
+
+  if(EMP.directive)h+='<div class="directive">'+esc(EMP.directive)+'</div>';
+
+  // counters
+  var tgt=parseInt(EMP.target_dials,10)||0;
+  h+='<div class="counters">';
+  h+='<div class="ctr"><div class="n" id="d-num">'+dials()+(tgt?' <small>/ '+tgt+'</small>':'')+'</div><div class="l">Dials today</div></div>';
+  h+='<div class="ctr"><div class="n" id="m-num">'+demos()+'</div><div class="l">Demos booked</div></div>';
+  h+='</div>';
+  h+='<div class="logrow"><button class="logbtn" onclick="bump(\'dial\')">+ Log a dial</button><button class="logbtn gold" onclick="bump(\'demo\')">+ Booked a demo</button></div>';
+
+  // the one rule
+  h+='<h2>The one rule</h2>';
+  h+='<div class="rule"><div class="say">Slow down. Low, calm voice. Sound like you\'re calling a buddy, not reading a script. End your ask like a <b>statement</b>, not a nervous question.</div>'
+    +'<div class="say" style="margin-top:9px;color:var(--muted)">Rushed and hyped = hang up in 3 seconds. Calm and a little curious wins.</div></div>';
+
+  // openers
+  h+='<h2>Open with this</h2><div class="card"><div class="pick">Pick one. Make it about <b>them</b>, not you.</div>';
+  h+='<div class="label">The honest one</div><div class="say">"Hey, you don\'t know me and I\'ll be straight with you, this is a cold call. You can hang up, or give me 20 seconds and then decide. Fair enough?"</div>';
+  h+='<div class="label" style="margin-top:15px">The question one</div><div class="say">"Hey, quick one. When your guys are out on a job and the phone rings, what usually happens to that call?"</div>';
+  h+='<div class="label" style="margin-top:15px">The local one</div><div class="say">"Hey, I work with a couple '+esc(nounShop)+' here in '+esc(EMP.city||'town')+' and figured I\'d see if this even makes sense for you. Cool if I ask one quick thing?"</div></div>';
+
+  // pain
+  h+='<h2>Why they care (say it calm, like a fact)</h2><div class="card"><ul>'
+    +'<li>Shops like theirs miss about <span class="big">1 in 4 calls</span> when the crew\'s on a job.</li>'
+    +'<li><span class="big">85%</span> of people who hit voicemail hang up and call the next guy.</li>'
+    +'<li>One missed emergency job is worth about <span class="big">$850</span>.</li>'
+    +'<li>Every missed call is usually a booked job that went to a competitor.</li></ul>'
+    +'<div class="say" style="margin-top:13px;color:var(--muted)">You\'re not selling "AI." You\'re helping them stop handing jobs to the next guy.</div></div>';
+
+  // the ask
+  h+='<h2>The ask (this is the whole goal)</h2><div class="card"><div class="say">"I\'m not going to pitch you on the phone. Let me build you a <b class="green">free 30-second demo</b> of it answering YOUR phone, in your shop\'s name. You listen, and if it\'s cool we grab 10 minutes. If not, no hard feelings. What\'s the best number to text it to?"</div>'
+    +'<div class="say" style="margin-top:11px;color:var(--muted)">Get the demo yes. Get the number. That\'s a win. Don\'t talk price.</div></div>';
+
+  // call list
+  var ls=lines();
+  if(ls.length){
+    h+='<h2>Your call list ('+ls.length+')</h2>';
+    ls.forEach(function(line){var p=parseLine(line);var tel=p.phone.replace(/[^0-9+]/g,'');
+      h+='<div class="call-item"><div class="biz">'+esc(p.name)+'</div>'+(p.phone?'<div class="ph">'+esc(p.phone)+'</div>':'')+'<div class="call-btns">'
+        +(tel?'<a class="cbtn call" href="tel:'+esc(tel)+'">Call</a>':'')
+        +'<button class="cbtn" onclick="markRow(this,\'dial\')">Dialed</button>'
+        +'<button class="cbtn book" onclick="markRow(this,\'demo\')">Booked demo</button></div></div>';
+    });
+  }else{
+    h+='<h2>Your call list</h2><div class="card"><div class="say" style="color:var(--muted)">No list set yet. Ask Avery or Tolu to load your numbers, or work your own and tap <b>+ Log a dial</b> above as you go.</div></div>';
+  }
+
+  // objections
+  h+='<h2>If they push back</h2>';
+  h+=obj('"Is this a sales call?"','"Honestly, kind of. I build one thing and I think it fits you. 20 seconds and you decide, deal?"');
+  h+=obj('"How did you get my number?"','"You\'re listed as a '+esc(noun)+', I\'m just calling local shops one by one. Totally fine to tell me to buzz off."');
+  h+=obj('"We already have voicemail."','"Right, and 8 of 10 callers hang up on voicemail. This actually answers, talks to them, and books the job. Want to hear it take a call?"');
+  h+=obj('"How much is it?"','"Way less than a receptionist and it never misses a call. Let me show it working first, then price is the easy part."');
+  h+=obj('"I\'m busy."','"Totally, and that\'s kind of the point. 20 seconds, can I just text you the demo and you look later?"');
+  h+=obj('"Just email me."','"Will do, what\'s the best address? I\'ll also text the demo so you can hear it, that\'s the part that matters."');
+  h+=obj('"Not interested."','"No worries, appreciate your time. If you ever get slammed and start missing calls, I\'m here."');
+
+  // voicemail
+  h+='<h2>No answer? Leave this, every time</h2><div class="card"><div class="say">"Hi, this is '+esc(EMP.name||'')+' with Ambrosia. I build the thing that answers your phones and books the job when your crew\'s on a site, so you stop losing calls to the next guy. I\'ll text you a 30-second demo, give it a listen. Talk soon."</div>';
+  if(demoUrl)h+='<a class="demo-btn" style="margin-top:12px" href="'+esc(demoUrl)+'" target="_blank">Open the demo link</a>';
+  h+='</div>';
+
+  // donts
+  h+='<h2>Don\'t</h2><div class="card dont"><ul>'
+    +'<li>Don\'t open with "how are you today."</li>'
+    +'<li>Don\'t rattle the script fast.</li>'
+    +'<li>Don\'t talk price or features in the first 30 seconds.</li>'
+    +'<li>Don\'t sound hyped or salesy.</li>'
+    +'<li>Don\'t argue an objection. Agree, then go back to the demo.</li></ul></div>';
+
+  h+='<footer>Ambrosia AI · you got this, '+esc(EMP.name||'')+'<br>Slow voice. Make it about them. Get the demo yes.</footer>';
+
+  document.getElementById('app').innerHTML=h;
+}
+function obj(q,a){return '<details><summary>'+esc(q)+'</summary><p>'+esc(a)+'</p></details>';}
+load();
+</script>
+</body>
+</html>
