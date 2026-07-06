@@ -29,7 +29,8 @@
   ::-webkit-scrollbar-track{background:var(--surface2)}
   ::-webkit-scrollbar-thumb{background:var(--border2);border:3px solid var(--surface2);border-radius:8px}
   ::-webkit-scrollbar-thumb:hover{background:var(--gold-deep)}
-  .wrap{max-width:1240px;margin:0 auto;padding:26px 22px 110px}
+  .wrap{max-width:1200px;margin:0 auto 0 64px;padding:26px 30px 110px;transition:margin-left .26s var(--ease)}
+  body.side-expanded .wrap{margin-left:214px}
   kbd{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:1px 5px;color:var(--muted)}
   /* header */
   header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -56,15 +57,25 @@
   .accent{height:1px;margin:18px 0 0;background:linear-gradient(90deg,transparent,var(--gold-deep),var(--gold),var(--gold-deep),transparent);background-size:200% auto;animation:slide 6s linear infinite;opacity:.7}
   @keyframes slide{to{background-position:200% center}}
   /* nav */
-  nav.tabs{display:flex;gap:3px;flex-wrap:wrap;margin:16px 0 26px;position:sticky;top:0;z-index:40;
-    background:rgba(8,8,7,.82);backdrop-filter:blur(10px);padding:8px 0;border-bottom:1px solid var(--border)}
-  nav.tabs button{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--muted);
-    font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:9px 14px;cursor:pointer;position:relative;transition:color .2s}
-  nav.tabs button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
-  nav.tabs button:hover{color:var(--text)}
-  nav.tabs button.on{color:var(--gold)}
-  nav.tabs button.on svg{opacity:1}
-  nav.tabs button.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-9px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light));box-shadow:0 0 10px rgba(201,168,76,.5)}
+  .sidebar{position:fixed;left:0;top:0;height:100vh;width:64px;background:linear-gradient(180deg,var(--surface2),var(--bg));border-right:1px solid var(--border);z-index:70;display:flex;flex-direction:column;transition:width .26s var(--ease);overflow:hidden}
+  body.side-expanded .sidebar{width:214px}
+  .side-top{display:flex;align-items:center;justify-content:space-between;padding:17px 16px 12px;min-height:58px}
+  .side-logo{font-family:'Playfair Display',serif;font-weight:700;font-size:23px;color:var(--gold);line-height:1}
+  .side-toggle{background:none;border:1px solid var(--border2);color:var(--muted);width:28px;height:28px;cursor:pointer;font-size:15px;flex:0 0 auto;transition:border-color .2s,color .2s;line-height:1}
+  .side-toggle:hover{border-color:var(--gold);color:var(--gold)}
+  .side-nav{display:flex;flex-direction:column;gap:2px;padding:6px 10px 20px;overflow-y:auto;overflow-x:hidden}
+  .side-nav::-webkit-scrollbar{width:0}
+  .side-nav button{display:flex;align-items:center;gap:14px;background:none;border:0;color:var(--muted);font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;padding:11px 11px;cursor:pointer;position:relative;transition:color .18s,background .18s;white-space:nowrap}
+  .side-nav button svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.8;flex:0 0 auto}
+  .side-nav button .lbl{opacity:0;transition:opacity .18s}
+  body.side-expanded .side-nav button .lbl{opacity:1}
+  .side-nav button:hover{color:var(--text);background:var(--surface3)}
+  .side-nav button.on{color:var(--gold)}
+  .side-nav button.on svg{opacity:1}
+  .side-nav button.on::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;background:linear-gradient(var(--gold),var(--gold-light));box-shadow:0 0 10px rgba(201,168,76,.5)}
+  .side-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:65}
+  .hamburger{display:none;background:none;border:1px solid var(--border2);color:var(--text);width:42px;height:42px;font-size:19px;cursor:pointer;flex:0 0 auto;margin-right:6px}
+  .hamburger:hover{border-color:var(--gold);color:var(--gold)}
   section.page{display:none;animation:fade .32s var(--ease)}
   section.page.on{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -241,19 +252,23 @@
   @media(max-width:860px){.grid2,.hero{grid-template-columns:1fr}.drawer{width:100vw}}
   @media(max-width:720px){
     body{font-size:15px}
-    .wrap{padding:calc(16px + env(safe-area-inset-top)) 14px calc(100px + env(safe-area-inset-bottom))}
-    header.top{align-items:flex-start}
+    .wrap{margin-left:0;padding:calc(16px + env(safe-area-inset-top)) 14px 44px}
+    body.side-expanded .wrap{margin-left:0}
+    header.top{align-items:center}
     .brand h1{font-size:25px}
     .htools{width:100%;margin-top:14px}
     .cmdk-trigger{flex:1;justify-content:center;padding:12px}
     .cmdk-trigger kbd{display:none}
     .badge{display:none}
     .accent{margin-top:14px}
-    nav.tabs{position:fixed;top:auto;bottom:0;left:0;right:0;margin:0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;justify-content:flex-start;border-top:1px solid var(--border2);border-bottom:0;padding:7px 6px calc(7px + env(safe-area-inset-bottom));gap:0;background:rgba(8,8,7,.97);z-index:60;backdrop-filter:blur(12px)}
-    nav.tabs::-webkit-scrollbar{display:none}
-    nav.tabs button{flex-direction:column;gap:4px;font-size:9.5px;letter-spacing:.02em;padding:6px 14px;min-width:64px}
-    nav.tabs button svg{width:21px;height:21px;opacity:.7}
-    nav.tabs button.on::after{top:-7px;bottom:auto;left:16px;right:16px}
+    .sidebar{width:236px;transform:translateX(-100%);box-shadow:16px 0 44px rgba(0,0,0,.55);padding-top:env(safe-area-inset-top)}
+    body.side-expanded .sidebar{width:236px}
+    body.side-open .sidebar{transform:none}
+    body.side-open .side-backdrop{opacity:1;pointer-events:auto}
+    .side-nav button{padding:13px 12px;font-size:14px}
+    .side-nav button .lbl{opacity:1}
+    .side-toggle{display:none}
+    .hamburger{display:flex;align-items:center;justify-content:center}
     .stats{grid-template-columns:repeat(2,1fr);gap:10px}
     .tile{padding:16px 15px}
     .tile .n{font-size:25px}
@@ -275,12 +290,28 @@
     button.add,button.act,.dactions .save{padding:13px 18px}
     .cmdk{padding-top:9vh}
   }
-  @media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}nav.tabs button{min-width:60px;padding:6px 11px}}
+  @media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
+<aside class="sidebar" id="sidebar">
+  <div class="side-top"><span class="side-logo">A</span><button class="side-toggle" onclick="toggleSidebar()" title="Expand / collapse" id="side-toggle">&#8249;</button></div>
+  <nav class="side-nav" id="tabs">
+    <button data-t="overview" class="on"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg><span class="lbl">Overview</span></button>
+    <button data-t="crm"><svg viewBox="0 0 16 16"><circle cx="8" cy="5.2" r="2.6"/><path d="M2.5 13.5c0-3 2.7-4.2 5.5-4.2s5.5 1.2 5.5 4.2"/></svg><span class="lbl">CRM</span></button>
+    <button data-t="pipeline"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="3" height="10"/><rect x="6.5" y="3" width="3" height="7"/><rect x="11" y="3" width="3" height="5"/></svg><span class="lbl">Pipeline</span></button>
+    <button data-t="tasks"><svg viewBox="0 0 16 16"><path d="M3 8.2l3 3 7-7"/></svg><span class="lbl">Tasks</span></button>
+    <button data-t="calendar"><svg viewBox="0 0 16 16"><rect x="2" y="3.5" width="12" height="10.5"/><path d="M2 6.5h12M5.5 2v3M10.5 2v3"/></svg><span class="lbl">Calendar</span></button>
+    <button data-t="notes"><svg viewBox="0 0 16 16"><rect x="3.5" y="2" width="9" height="12"/><path d="M5.5 6h5M5.5 9h5M5.5 12h3"/></svg><span class="lbl">Notes</span></button>
+    <button data-t="gen"><svg viewBox="0 0 16 16"><path d="M8 2l1.6 4.4L14 8l-4.4 1.6L8 14l-1.6-4.4L2 8l4.4-1.6z"/></svg><span class="lbl">Lead Gen</span></button>
+    <button data-t="demos"><svg viewBox="0 0 16 16"><path d="M4.5 2.5l2 .5 1 2.5-1.5 1a7 7 0 003 3l1-1.5 2.5 1 .5 2c0 1-1 1.7-2 1.5C6 12 4 8 3 5c-.2-1 .5-2 1.5-2.5z"/></svg><span class="lbl">Demos</span></button>
+    <button data-t="clients"><svg viewBox="0 0 16 16"><path d="M8 2l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.8 4.3 13.4l.8-4.2L2 6.4l4.2-.5z"/></svg><span class="lbl">Clients</span></button>
+  </nav>
+</aside>
+<div class="side-backdrop" id="side-backdrop" onclick="closeSide()"></div>
 <div class="wrap">
   <header class="top">
+    <button class="hamburger" onclick="openSide()" aria-label="Menu">&#9776;</button>
     <div class="brand">
       <h1>Ambrosia OS</h1>
       <div class="barline"></div>
@@ -295,17 +326,6 @@
   <div class="accent"></div>
   <div class="banner" id="banner">CRM not connected. Attach the Google Sheets credential (ventures@) to the workflow and re-toggle it, then everything below goes live.</div>
 
-  <nav class="tabs" id="tabs">
-    <button data-t="overview" class="on"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>Overview</button>
-    <button data-t="crm"><svg viewBox="0 0 16 16"><circle cx="8" cy="5.2" r="2.6"/><path d="M2.5 13.5c0-3 2.7-4.2 5.5-4.2s5.5 1.2 5.5 4.2"/></svg>CRM</button>
-    <button data-t="pipeline"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="3" height="10"/><rect x="6.5" y="3" width="3" height="7"/><rect x="11" y="3" width="3" height="5"/></svg>Pipeline</button>
-    <button data-t="tasks"><svg viewBox="0 0 16 16"><path d="M3 8.2l3 3 7-7"/></svg>Tasks</button>
-    <button data-t="calendar"><svg viewBox="0 0 16 16"><rect x="2" y="3.5" width="12" height="10.5"/><path d="M2 6.5h12M5.5 2v3M10.5 2v3"/></svg>Calendar</button>
-    <button data-t="notes"><svg viewBox="0 0 16 16"><rect x="3.5" y="2" width="9" height="12"/><path d="M5.5 6h5M5.5 9h5M5.5 12h3"/></svg>Notes</button>
-    <button data-t="gen"><svg viewBox="0 0 16 16"><path d="M8 2l1.6 4.4L14 8l-4.4 1.6L8 14l-1.6-4.4L2 8l4.4-1.6z"/></svg>Lead Gen</button>
-    <button data-t="demos"><svg viewBox="0 0 16 16"><path d="M4.5 2.5l2 .5 1 2.5-1.5 1a7 7 0 003 3l1-1.5 2.5 1 .5 2c0 1-1 1.7-2 1.5C6 12 4 8 3 5c-.2-1 .5-2 1.5-2.5z"/></svg>Demos</button>
-    <button data-t="clients"><svg viewBox="0 0 16 16"><path d="M8 2l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.8 4.3 13.4l.8-4.2L2 6.4l4.2-.5z"/></svg>Clients</button>
-  </nav>
 
   <!-- OVERVIEW -->
   <section class="page on" id="p-overview">
@@ -564,7 +584,11 @@ function demoLink(biz,city,owner,niche){return DEMO+'?biz='+encodeURIComponent(b
 function animateNum(el,to,suffix){if(!el)return;to=parseInt(to,10)||0;var t0=null;function step(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/650,1);var v=Math.round((0.5-Math.cos(p*Math.PI)/2)*to);el.textContent=v+(suffix||'');if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
 function tab(name){document.querySelectorAll('nav.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();window.scrollTo({top:0,behavior:'smooth'});}
-document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t)tab(b.dataset.t);});
+document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t){tab(b.dataset.t);closeSide();}});
+function toggleSidebar(){var ex=!document.body.classList.contains('side-expanded');document.body.classList.toggle('side-expanded',ex);var t=document.getElementById('side-toggle');if(t)t.innerHTML=ex?'‹':'›';try{localStorage.setItem('ambrosia_side',ex?'1':'0');}catch(e){}}
+function openSide(){document.body.classList.add('side-open');}
+function closeSide(){document.body.classList.remove('side-open');}
+(function(){var s='1';try{var v=localStorage.getItem('ambrosia_side');if(v!==null)s=v;}catch(e){}if(s==='1')document.body.classList.add('side-expanded');var t=document.getElementById('side-toggle');if(t)t.innerHTML=(s==='1')?'‹':'›';})();
 
 async function getTab(t){try{var r=await fetch(API+'/ops-data?tab='+t);var d=await r.json();return Array.isArray(d)?d:(d.data||[]);}catch(e){return null;}}
 async function save(tab,row){var r=await fetch(API+'/ops-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tab:tab,row:row})});return r.json();}
