@@ -317,6 +317,12 @@
   .coach-input textarea:focus{outline:none;border-color:var(--gold)}
   .coach-input .act{flex:none;min-height:46px}
   @media(max-width:720px){.coach{height:calc(100vh - 190px)}.msg{max-width:95%}}
+  /* insights */
+  #ins-takeaways{list-style:none;margin:0;padding:0}
+  #ins-takeaways li{padding:9px 0 9px 20px;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5;position:relative}
+  #ins-takeaways li:last-child{border-bottom:none}
+  #ins-takeaways li:before{content:'\2192';position:absolute;left:0;color:var(--gold)}
+  .ins-rate .n{font-size:24px}.ins-rate .l{line-height:1.3}
 </style>
 </head>
 <body>
@@ -325,6 +331,7 @@
   <nav class="side-nav" id="tabs">
     <button data-t="overview" class="on"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg><span class="lbl">Overview</span></button>
     <button data-t="coach"><svg viewBox="0 0 16 16"><path d="M2.5 3h11v8h-6l-3 2.5V11h-2z"/></svg><span class="lbl">Coach</span></button>
+    <button data-t="insights"><svg viewBox="0 0 16 16"><path d="M2 14V2M2 14h12M4.5 11l3-3 2.5 2 3.5-4.5"/></svg><span class="lbl">Insights</span></button>
     <button data-t="crm"><svg viewBox="0 0 16 16"><circle cx="8" cy="5.2" r="2.6"/><path d="M2.5 13.5c0-3 2.7-4.2 5.5-4.2s5.5 1.2 5.5 4.2"/></svg><span class="lbl">CRM</span></button>
     <button data-t="pipeline"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="3" height="10"/><rect x="6.5" y="3" width="3" height="7"/><rect x="11" y="3" width="3" height="5"/></svg><span class="lbl">Pipeline</span></button>
     <button data-t="tasks"><svg viewBox="0 0 16 16"><path d="M3 8.2l3 3 7-7"/></svg><span class="lbl">Tasks</span></button>
@@ -393,6 +400,22 @@
         <textarea id="coach-text" rows="1" placeholder="Ask your coach…  (Enter to send, Shift+Enter for a new line)"></textarea>
         <button class="act" id="coach-send" onclick="coachSend()">Send</button>
       </div>
+    </div>
+  </section>
+
+  <!-- INSIGHTS -->
+  <section class="page" id="p-insights">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Insights</h2><div class="hint">What is actually converting, and what to fix. Reads straight from your pipeline.</div></div></div>
+    </div>
+    <div class="stats" id="ins-rates"></div>
+    <div class="hero">
+      <div class="card"><h3>What's working</h3><div class="hint">Auto-read takeaways</div><ul id="ins-takeaways"><li>Loading…</li></ul></div>
+      <div class="card"><h3>Funnel conversion</h3><div class="hint">Where leads drop off</div><div id="ins-funnel"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Leads by source</h3><div class="hint">Where they came from</div><div id="ins-source"></div></div>
+      <div class="card"><h3>This week's activity</h3><div class="hint">Touches logged, last 7 days, by person</div><div id="ins-activity"></div></div>
     </div>
   </section>
 
@@ -626,7 +649,7 @@ function stageOf(st){st=String(st||'').toLowerCase();
 function demoLink(biz,city,owner,niche){return DEMO+'?biz='+encodeURIComponent(biz||'')+'&city='+encodeURIComponent(city||'Calgary')+'&owner='+encodeURIComponent(owner||'there')+(niche?'&type='+encodeURIComponent(niche):'');}
 function animateNum(el,to,suffix){if(!el)return;to=parseInt(to,10)||0;var t0=null;function step(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/650,1);var v=Math.round((0.5-Math.cos(p*Math.PI)/2)*to);el.textContent=v+(suffix||'');if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
-function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();window.scrollTo({top:0,behavior:'smooth'});}
+function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();window.scrollTo({top:0,behavior:'smooth'});}
 document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t){tab(b.dataset.t);closeSide();}});
 function toggleSidebar(){var ex=!document.body.classList.contains('side-expanded');document.body.classList.toggle('side-expanded',ex);var t=document.getElementById('side-toggle');if(t)t.innerHTML=ex?'‹':'›';try{localStorage.setItem('ambrosia_side',ex?'1':'0');}catch(e){}}
 function openSide(){document.body.classList.add('side-open');}
@@ -699,8 +722,8 @@ async function deleteEditor(){
   catch(e){toast('Delete failed',1);}
 }
 async function reloadTab(tab){
-  if(tab==='Leads'){LEADS=(await getTab('Leads'))||[];refreshFilters();overview();renderLeads();}
-  else if(tab==='Deals'){DEALS=(await getTab('Deals'))||[];renderDeals();renderGoal();}
+  if(tab==='Leads'){LEADS=(await getTab('Leads'))||[];refreshFilters();overview();renderLeads();renderInsights();}
+  else if(tab==='Deals'){DEALS=(await getTab('Deals'))||[];renderDeals();renderGoal();renderInsights();}
   else if(tab==='Tasks'){TASKS=(await getTab('Tasks'))||[];renderTasks();renderFocus();}
   else if(tab==='Notes'){NOTES=(await getTab('Notes'))||[];renderNotes();}
   else if(tab==='Events'){EVENTS=(await getTab('Events'))||[];renderCal();renderFocus();}
@@ -713,6 +736,46 @@ function funnelChart(elId,stages){var el=document.getElementById(elId);if(!el)re
 function countBy(list,fn){var m={};list.forEach(function(r){var k=fn(r)||'unknown';m[k]=(m[k]||0)+1;});return m;}
 function kpi(list){var contacted=list.filter(function(r){var s=stageOf(r.status);return s==='contacted'||s==='replied'||s==='booked'||s==='won';}).length;var replied=list.filter(function(r){var s=stageOf(r.status);return s==='replied'||s==='booked'||s==='won';}).length;var booked=list.filter(function(r){var s=stageOf(r.status);return s==='booked'||s==='won';}).length;var won=list.filter(function(r){return stageOf(r.status)==='won';}).length;var rr=contacted?Math.round(replied/contacted*100):0;var tiles=[['Leads',list.length,''],['Contacted',contacted,''],['Replied',replied,''],['Booked',booked,''],['Won',won,''],['Reply rate',rr,'%']];document.getElementById('kpis').innerHTML=tiles.map(function(t,i){return '<div class="tile" style="animation-delay:'+(i*55)+'ms"><div class="n" id="kpi'+i+'">0'+t[2]+'</div><div class="l">'+t[0]+'</div></div>';}).join('');tiles.forEach(function(t,i){animateNum(document.getElementById('kpi'+i),t[1],t[2]);});}
 function overview(){var L=live(LEADS);kpi(L);renderGoal();renderFocus();var sc={new:0,contacted:0,replied:0,booked:0,won:0};L.forEach(function(r){var s=stageOf(r.status);if(s==='dead')return;if(s==='won'){sc.won++;sc.booked++;sc.replied++;sc.contacted++;sc.new++;}else if(s==='booked'){sc.booked++;sc.replied++;sc.contacted++;sc.new++;}else if(s==='replied'){sc.replied++;sc.contacted++;sc.new++;}else if(s==='contacted'){sc.contacted++;sc.new++;}else{sc.new++;}});funnelChart('c-funnel',FUNNEL.map(function(f){return {k:f[1],v:sc[f[0]]};}));var byN=countBy(L,function(r){return (r.niche||'').toLowerCase();});hbar('c-niche',Object.keys(byN).map(function(k){return {k:k,v:byN[k]};}).sort(function(a,b){return b.v-a.v;}),true);var byS=countBy(L,function(r){return String(r.status||'new').toLowerCase();});hbar('c-status',Object.keys(byS).map(function(k){return {k:k,v:byS[k]};}).sort(function(a,b){return b.v-a.v;}),true);var byC=countBy(L,function(r){return r.city||'';});hbar('c-city',Object.keys(byC).map(function(k){return {k:k,v:byC[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,8),false);}
+
+/* ---------- insights (learning loop) ---------- */
+function daysAgo(n){var d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
+function pctOf(a,b){return b?Math.round(a/b*100):0;}
+function renderInsights(){
+  var L=live(LEADS);
+  var sc={contacted:0,replied:0,booked:0,won:0};
+  L.forEach(function(r){var s=stageOf(r.status);if(s==='dead')return;
+    if(s==='won'){sc.won++;sc.booked++;sc.replied++;sc.contacted++;}
+    else if(s==='booked'){sc.booked++;sc.replied++;sc.contacted++;}
+    else if(s==='replied'){sc.replied++;sc.contacted++;}
+    else if(s==='contacted'){sc.contacted++;}
+  });
+  var rates=[['Contacted',pctOf(sc.contacted,L.length),'of all leads'],['Reply rate',pctOf(sc.replied,sc.contacted),'of contacted'],['Booked',pctOf(sc.booked,sc.replied),'of replied'],['Closed',pctOf(sc.won,sc.booked),'of booked']];
+  var rt=document.getElementById('ins-rates');
+  if(rt){rt.innerHTML=rates.map(function(t,i){return '<div class="tile ins-rate" style="animation-delay:'+(i*55)+'ms"><div class="n" id="insr'+i+'">0%</div><div class="l">'+t[0]+'<br><span style="color:var(--muted);font-size:10px">'+t[2]+'</span></div></div>';}).join('');rates.forEach(function(t,i){animateNum(document.getElementById('insr'+i),t[1],'%');});}
+  funnelChart('ins-funnel',[{k:'Leads',v:L.length},{k:'Contacted',v:sc.contacted},{k:'Replied',v:sc.replied},{k:'Booked',v:sc.booked},{k:'Won',v:sc.won}]);
+  var srcMap={};L.forEach(function(r){var s=(r.source||'unknown');if(!srcMap[s])srcMap[s]={n:0,rep:0};srcMap[s].n++;var st=stageOf(r.status);if(st==='replied'||st==='booked'||st==='won')srcMap[s].rep++;});
+  hbar('ins-source',Object.keys(srcMap).map(function(k){return {k:k,v:srcMap[k].n};}).sort(function(a,b){return b.v-a.v;}),true);
+  var wk=daysAgo(7);var actMap={};L.forEach(function(r){var lt=String(r.last_touch||'').slice(0,10);if(lt&&lt>=wk){var o=r.owner||'unassigned';actMap[o]=(actMap[o]||0)+1;}});
+  hbar('ins-activity',Object.keys(actMap).map(function(k){return {k:k,v:actMap[k]};}).sort(function(a,b){return b.v-a.v;}),true);
+  var t=[];
+  if(L.length<3)t.push('Only '+L.length+' lead'+(L.length===1?'':'s')+' in the CRM. Source a batch in Lead Gen before this can tell you much.');
+  if(sc.contacted===0){t.push('Nobody has been contacted yet. The learning loop has nothing to learn from until you make calls. Start with the leads that have phone numbers.');}
+  else{
+    var wk1=pctOf(sc.replied,sc.contacted),wk2=pctOf(sc.booked,sc.replied),wk3=pctOf(sc.won,sc.booked);
+    var weak=[['turning contacts into replies',wk1,sc.contacted],['turning replies into booked demos',wk2,sc.replied],['closing booked demos',wk3,sc.booked]].filter(function(x){return x[2]>0;}).sort(function(a,b){return a[1]-b[1];})[0];
+    if(weak)t.push('Weakest step: '+weak[0]+' at '+weak[1]+'%. That is where to focus.');
+    var emailed=L.filter(function(r){return String(r.status||'').toLowerCase().indexOf('email')>=0;}).length;
+    if(emailed>=5&&sc.replied===0)t.push(emailed+' emails sent, 0 replies. That is a message problem, not a volume problem. Change the opener and the ask, do not send more of the same.');
+    var best=null;Object.keys(srcMap).forEach(function(k){var m=srcMap[k];if(m.n>=3){var rr=m.rep/m.n;if(best===null||rr>best.rr)best={k:k,rr:rr,n:m.n};}});
+    if(best&&best.rr>0)t.push('Best source so far: '+best.k+' at '+Math.round(best.rr*100)+'% reaching a reply ('+best.n+' leads). Get more like these.');
+  }
+  var stale=L.filter(function(r){var s=stageOf(r.status);if(s==='new'||s==='dead'||s==='won')return false;return !String(r.next_touch||'').slice(0,10);}).length;
+  if(stale>0)t.push(stale+' engaged lead'+(stale===1?'':'s')+' with no next step. The Daily Coach auto-sets those each morning.');
+  var never=L.filter(function(r){return stageOf(r.status)==='new';}).length;
+  if(never>0)t.push(never+' lead'+(never===1?'':'s')+' never contacted. That is your call list today.');
+  if(!t.length)t.push('Pipeline looks healthy. Keep the calls going.');
+  var el=document.getElementById('ins-takeaways');if(el)el.innerHTML=t.map(function(x){return '<li>'+esc(x)+'</li>';}).join('');
+}
 
 /* ---------- goal + focus ---------- */
 function renderGoal(){var won=live(DEALS).filter(function(d){return String(d.stage).toLowerCase()==='won';});var mrr=won.reduce(function(a,d){return a+(parseFloat(d.value)||0);},0);var pct=Math.min(mrr/10000,1)*100;var fill=document.getElementById('goal-fill');if(fill)setTimeout(function(){fill.style.width=pct+'%';},80);var mrrEl=document.getElementById('goal-mrr');if(mrrEl)mrrEl.innerHTML='$'+mrr.toLocaleString()+' <small>/ $10k MRR</small>';var now=new Date();var months=Math.max((2026-now.getFullYear())*12+(9-now.getMonth()),0);var sub=document.getElementById('goal-sub');if(sub)sub.innerHTML='<b>'+won.length+'</b> paying client'+(won.length===1?'':'s')+' · <b>'+months+'</b> months to October 2026';}
@@ -871,6 +934,8 @@ function paletteCommands(){return [
   {label:'Overview',hint:'Go',run:function(){tab('overview');}},
   {label:'Coach',hint:'Go',run:function(){tab('coach');}},
   {label:'Ask the coach',hint:'Action',run:function(){tab('coach');}},
+  {label:'Insights',hint:'Go',run:function(){tab('insights');}},
+  {label:'What is working',hint:'Learn',run:function(){tab('insights');}},
   {label:'CRM',hint:'Go',run:function(){tab('crm');}},
   {label:'Pipeline',hint:'Go',run:function(){tab('pipeline');}},
   {label:'Tasks',hint:'Go',run:function(){tab('tasks');}},
@@ -920,7 +985,7 @@ async function loadAll(){
   if(leads===null){document.getElementById('banner').style.display='block';document.getElementById('upd').textContent='CRM not connected';document.getElementById('rows').innerHTML='<tr><td colspan="7" style="color:#DF5583">Attach the Google Sheets credential and re-toggle the workflow.</td></tr>';return;}
   LEADS=leads;refreshFilters();renderLeads();
   DEALS=(await getTab('Deals'))||[];TASKS=(await getTab('Tasks'))||[];NOTES=(await getTab('Notes'))||[];EVENTS=(await getTab('Events'))||[];
-  overview();renderDeals();renderTasks();renderNotes();renderCal();headcount();
+  overview();renderDeals();renderTasks();renderNotes();renderCal();renderInsights();headcount();
 }
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 loadAll();
