@@ -363,6 +363,24 @@
   .mile:last-child{border-bottom:none}
   .mile .ml{font-weight:600}
   .mile .mr{color:var(--gold-light);font-family:'JetBrains Mono',monospace}
+  /* employees */
+  .emp-card{background:linear-gradient(150deg,var(--surface3),var(--surface));border:1px solid var(--border2);padding:20px;margin-bottom:14px;position:relative}
+  .emp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .emp-id{display:flex;align-items:center;gap:12px}
+  .emp-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-deep));color:#080807;font-family:'Playfair Display',serif;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .emp-id h3{font-family:'Playfair Display',serif;font-size:18px}
+  .emp-id .r{font-size:12px;color:var(--muted);margin-top:2px}
+  .emp-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
+  .emp-on{background:var(--c4)}.emp-off{background:var(--muted)}
+  .emp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 16px}
+  .emp-stat{background:var(--surface2);border:1px solid var(--border);border-top:2px solid var(--gold);padding:12px 13px}
+  .emp-stat .n{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+  .emp-stat .l{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .emp-field{margin-bottom:12px}
+  .emp-field .fl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+  .emp-field .fv{font-size:13px;color:var(--text);white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);padding:10px 12px}
+  .emp-empty{color:var(--muted);font-size:13px;padding:24px;background:var(--surface);border:1px dashed var(--border2);text-align:center;line-height:1.7}
+  .emp-empty b{color:var(--gold-light)}
 </style>
 </head>
 <body>
@@ -382,6 +400,7 @@
     <button data-t="gen"><svg viewBox="0 0 16 16"><path d="M8 2l1.6 4.4L14 8l-4.4 1.6L8 14l-1.6-4.4L2 8l4.4-1.6z"/></svg><span class="lbl">Lead Gen</span></button>
     <button data-t="demos"><svg viewBox="0 0 16 16"><path d="M4.5 2.5l2 .5 1 2.5-1.5 1a7 7 0 003 3l1-1.5 2.5 1 .5 2c0 1-1 1.7-2 1.5C6 12 4 8 3 5c-.2-1 .5-2 1.5-2.5z"/></svg><span class="lbl">Demos</span></button>
     <button data-t="clients"><svg viewBox="0 0 16 16"><path d="M8 2l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.8 4.3 13.4l.8-4.2L2 6.4l4.2-.5z"/></svg><span class="lbl">Clients</span></button>
+    <button data-t="employees"><svg viewBox="0 0 16 16"><circle cx="5.5" cy="5" r="2.3"/><circle cx="11.2" cy="6" r="1.9"/><path d="M1.5 13.2c0-2.5 1.9-3.8 4-3.8s4 1.3 4 3.8M10 13.2c0-1.7.7-2.9 2.1-3.3"/></svg><span class="lbl">Employees</span></button>
   </nav>
 </aside>
 <div class="side-backdrop" id="side-backdrop" onclick="closeSide()"></div>
@@ -642,6 +661,15 @@
     <div class="clientcard"><h3>Chick-fil-A (Macleod)</h3><div class="meta">QSR · Live · free build for proof</div><p>AI voice agent live and taking real calls. Proof asset. Blocker: manager hasn't tested it; testimonial not captured.</p></div>
     <div class="clientcard" style="border-left-color:var(--muted)"><h3>+ New client</h3><div class="meta">Pipeline</div><p>Close the first paying client from the outreach machine and it lands here.</p></div>
   </section>
+
+  <!-- EMPLOYEES -->
+  <section class="page" id="p-employees">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Employees</h2><div class="hint">Set what your callers work on. They get a stripped-down card: the script and their list, nothing else. No CRM, no pipeline, no money.</div></div></div>
+      <button class="add" onclick="openEditor('Employees',null)"><span class="plus">+</span> Add employee</button>
+    </div>
+    <div id="emp-list"><div class="emp-empty">Loading…</div></div>
+  </section>
 </div>
 
 <!-- EDITOR DRAWER -->
@@ -735,10 +763,20 @@ const FORMDEFS={
     {k:'type',label:'Type',type:'select',options:['call','demo','meeting','follow-up']},
     {k:'lead',label:'Linked to',type:'text'},
     {k:'notes',label:'Notes',type:'textarea'}
+  ],
+  Employees:[
+    {k:'name',label:'Name',type:'text'},
+    {k:'active',label:'Active',type:'select',options:['yes','no'],half:1},
+    {k:'niche',label:'Calling (niche)',type:'text',half:1},
+    {k:'city',label:'Area / city',type:'text',half:1},
+    {k:'target_dials',label:'Daily dial target',type:'number',half:1},
+    {k:'demo_url',label:'Demo link to text (optional)',type:'text'},
+    {k:'directive',label:'Today’s focus — what to call, the goal',type:'textarea'},
+    {k:'call_list',label:'Call list — one per line: Business, phone',type:'textarea'}
   ]
 };
 const LEGACY={Deals:'deal_id',Tasks:'task_id',Notes:'note_id',Events:'event_id'};
-const KICK={Leads:'Lead',Deals:'Deal',Tasks:'Task',Notes:'Note',Events:'Event'};
+const KICK={Leads:'Lead',Deals:'Deal',Tasks:'Task',Notes:'Note',Events:'Event',Employees:'Employee'};
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function gv(id){var e=document.getElementById(id);return e?e.value:'';}
@@ -756,7 +794,7 @@ function stageOf(st){st=String(st||'').toLowerCase();
 function demoLink(biz,city,owner,niche){return DEMO+'?biz='+encodeURIComponent(biz||'')+'&city='+encodeURIComponent(city||'Calgary')+'&owner='+encodeURIComponent(owner||'there')+(niche?'&type='+encodeURIComponent(niche):'');}
 function animateNum(el,to,suffix){if(!el)return;to=parseInt(to,10)||0;var t0=null;function step(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/650,1);var v=Math.round((0.5-Math.cos(p*Math.PI)/2)*to);el.textContent=v+(suffix||'');if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
-function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();if(name==='call')callOpen();if(name==='money')renderMoney();window.scrollTo({top:0,behavior:'smooth'});}
+function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();if(name==='call')callOpen();if(name==='money')renderMoney();if(name==='employees')renderEmployees();window.scrollTo({top:0,behavior:'smooth'});}
 document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t){tab(b.dataset.t);closeSide();}});
 function toggleSidebar(){var ex=!document.body.classList.contains('side-expanded');document.body.classList.toggle('side-expanded',ex);var t=document.getElementById('side-toggle');if(t)t.innerHTML=ex?'‹':'›';try{localStorage.setItem('ambrosia_side',ex?'1':'0');}catch(e){}}
 function openSide(){document.body.classList.add('side-open');}
@@ -834,6 +872,7 @@ async function reloadTab(tab){
   else if(tab==='Tasks'){TASKS=(await getTab('Tasks'))||[];renderTasks();renderFocus();}
   else if(tab==='Notes'){NOTES=(await getTab('Notes'))||[];renderNotes();}
   else if(tab==='Events'){EVENTS=(await getTab('Events'))||[];renderCal();renderFocus();}
+  else if(tab==='Employees'){EMPLOYEES=(await getTab('Employees'))||[];renderEmployees();}
   headcount();
 }
 
@@ -1109,6 +1148,8 @@ function paletteCommands(){return [
   {label:'Lead Gen',hint:'Go',run:function(){tab('gen');}},
   {label:'Demos',hint:'Go',run:function(){tab('demos');}},
   {label:'Clients',hint:'Go',run:function(){tab('clients');}},
+  {label:'Employees',hint:'Go',run:function(){tab('employees');}},
+  {label:'Add employee',hint:'New',run:function(){tab('employees');openEditor('Employees',null);}},
   {label:'Add a lead',hint:'New',run:function(){tab('crm');openEditor('Leads',null);}},
   {label:'New deal',hint:'New',run:function(){tab('pipeline');openEditor('Deals',null);}},
   {label:'New task',hint:'New',run:function(){tab('tasks');openEditor('Tasks',null);}},
@@ -1142,6 +1183,55 @@ document.addEventListener('keydown',function(e){
   } else if(e.key==='Escape'){closeEditor();}
 });
 
+/* ---------- employees ---------- */
+var EMPLOYEES=[],empSeeding=false;
+var EMP_CARD_BASE='https://avery-li09.github.io/ambrosia-os/tej.html';
+function empCardUrl(id){return EMP_CARD_BASE+'?e='+encodeURIComponent(id);}
+function empAll(){return live(EMPLOYEES).filter(function(r){return r&&r.name;});}
+function empGet(id){return empAll().filter(function(x){return String(x.id)===String(id);})[0]||null;}
+function empListLines(s){return String(s||'').split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
+async function renderEmployees(){
+  var box=document.getElementById('emp-list');if(!box)return;
+  var list=empAll();
+  if(list.length){box.innerHTML=list.map(empCardHtml).join('');return;}
+  if(!empSeeding){
+    empSeeding=true;box.innerHTML='<div class="emp-empty">Setting up Tej…</div>';
+    var seed={id:'emp_tej',name:'Tej',active:'yes',niche:'plumbing',city:'Calgary',target_dials:'30',demo_url:'',
+      directive:'Call independent plumbers in Calgary. Goal today: 25 dials, 3 booked demos. Slow voice, make it about them, get the demo yes.',
+      call_list:'',dials_today:'0',demos_today:'0',last_active:'',created_at:today(),updated_at:today(),deleted:''};
+    try{await save('Employees',seed);}catch(e){}
+    EMPLOYEES=(await getTab('Employees'))||[];empSeeding=false;
+    if(empAll().length){return renderEmployees();}
+  }
+  box.innerHTML='<div class="emp-empty">Almost ready. Add a tab named <b>Employees</b> to your CRM Google Sheet (an empty tab is fine, no headers needed), then reload this page. Tej sets himself up automatically after that.</div>';
+}
+function empCardHtml(e){
+  var td=today(),fresh=String(e.last_active||'').slice(0,10)===td;
+  var dials=fresh?(parseInt(e.dials_today,10)||0):0, demos=fresh?(parseInt(e.demos_today,10)||0):0;
+  var tgt=parseInt(e.target_dials,10)||0, on=String(e.active||'yes').toLowerCase()!=='no';
+  var listN=empListLines(e.call_list).length, ini=String(e.name||'?').trim().charAt(0).toUpperCase();
+  var id=esc(e.id);
+  var h='<div class="emp-card">';
+  h+='<div class="emp-head"><div class="emp-id"><div class="emp-av">'+esc(ini)+'</div><div><h3>'+esc(e.name)+'</h3>'
+    +'<div class="r"><span class="emp-dot '+(on?'emp-on':'emp-off')+'"></span>'+(on?'Active':'Paused')+' · calling '+esc(e.niche||'—')+' · '+esc(e.city||'—')+'</div></div></div>';
+  h+='<div class="emp-actions" style="display:flex;gap:8px;flex-wrap:wrap">'
+    +'<button class="ghost" onclick="empCopy(\''+id+'\')">Copy his link</button>'
+    +'<a class="ghost" style="text-decoration:none" href="'+esc(empCardUrl(e.id))+'" target="_blank">Open card</a>'
+    +'<button class="ghost" onclick="openEditor(\'Employees\',empGet(\''+id+'\'))">Edit</button></div></div>';
+  h+='<div class="emp-stats">'
+    +'<div class="emp-stat"><div class="n">'+dials+(tgt?' <small style="font-size:12px;color:var(--muted);font-family:Inter">/ '+tgt+'</small>':'')+'</div><div class="l">Dials today</div></div>'
+    +'<div class="emp-stat"><div class="n">'+demos+'</div><div class="l">Demos booked</div></div>'
+    +'<div class="emp-stat"><div class="n">'+listN+'</div><div class="l">On his list</div></div></div>';
+  if(e.directive)h+='<div class="emp-field"><div class="fl">Today’s focus</div><div class="fv">'+esc(e.directive)+'</div></div>';
+  h+='<div class="emp-field"><div class="fl">Call list — only he sees this, not your CRM</div><div class="fv">'
+    +(e.call_list?esc(e.call_list):'<span style="color:var(--muted)">Empty. Edit and add lines like: Ace Plumbing, 403-555-1234</span>')+'</div></div>';
+  h+='</div>';
+  return h;
+}
+function empCopy(id){var u=empCardUrl(id);var nm=(empGet(id)||{}).name||'them';
+  if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){toast('Link copied — send it to '+nm);});}
+  else{toast('Copy: '+u);}}
+
 /* ---------- load ---------- */
 function headcount(){document.getElementById('upd').textContent=live(LEADS).length+' leads · '+live(DEALS).length+' deals · '+live(TASKS).length+' tasks · '+live(EVENTS).length+' events';}
 async function loadAll(){
@@ -1149,7 +1239,7 @@ async function loadAll(){
   var leads=await getTab('Leads');
   if(leads===null){document.getElementById('banner').style.display='block';document.getElementById('upd').textContent='CRM not connected';document.getElementById('rows').innerHTML='<tr><td colspan="7" style="color:#DF5583">Attach the Google Sheets credential and re-toggle the workflow.</td></tr>';return;}
   LEADS=leads;refreshFilters();renderLeads();
-  DEALS=(await getTab('Deals'))||[];TASKS=(await getTab('Tasks'))||[];NOTES=(await getTab('Notes'))||[];EVENTS=(await getTab('Events'))||[];
+  DEALS=(await getTab('Deals'))||[];TASKS=(await getTab('Tasks'))||[];NOTES=(await getTab('Notes'))||[];EVENTS=(await getTab('Events'))||[];EMPLOYEES=(await getTab('Employees'))||[];
   overview();renderDeals();renderTasks();renderNotes();renderCal();renderInsights();renderMoney();headcount();
 }
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
