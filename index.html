@@ -1215,6 +1215,7 @@ function empCardHtml(e){
   h+='<div class="emp-head"><div class="emp-id"><div class="emp-av">'+esc(ini)+'</div><div><h3>'+esc(e.name)+'</h3>'
     +'<div class="r"><span class="emp-dot '+(on?'emp-on':'emp-off')+'"></span>'+(on?'Active':'Paused')+' · calling '+esc(e.niche||'—')+' · '+esc(e.city||'—')+'</div></div></div>';
   h+='<div class="emp-actions" style="display:flex;gap:8px;flex-wrap:wrap">'
+    +'<button class="add" style="padding:8px 13px" onclick="empFillLeads(\''+id+'\')"><span class="plus">+</span> Fill from new leads</button>'
     +'<button class="ghost" onclick="empCopy(\''+id+'\')">Copy his link</button>'
     +'<a class="ghost" style="text-decoration:none" href="'+esc(empCardUrl(e.id))+'" target="_blank">Open card</a>'
     +'<button class="ghost" onclick="openEditor(\'Employees\',empGet(\''+id+'\'))">Edit</button></div></div>';
@@ -1231,6 +1232,26 @@ function empCardHtml(e){
 function empCopy(id){var u=empCardUrl(id);var nm=(empGet(id)||{}).name||'them';
   if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){toast('Link copied — send it to '+nm);});}
   else{toast('Copy: '+u);}}
+async function empFillLeads(id){
+  var e=empGet(id);if(!e)return;
+  var have={};empListLines(e.call_list).forEach(function(l){var m=l.match(/[0-9][0-9\-\s().+]{6,}/);if(m)have[m[0].replace(/[^0-9]/g,'')]=1;});
+  var pool=live(LEADS).filter(function(l){
+    var ph=String(l.phone||'').replace(/[^0-9]/g,'');
+    var st=String(l.status||'new').toLowerCase();
+    var ow=String(l.owner||'').trim();
+    return ph.length>=7&&st==='new'&&(!ow||ow===e.name)&&!have[ph];
+  }).slice(0,15);
+  if(!pool.length){toast('No unworked leads with phone numbers. Generate leads first (Lead Gen tab).',1);return;}
+  var add=pool.map(function(l){return (l.business_name||'Lead')+', '+l.phone;}).join('\n');
+  var rec=Object.assign({},e);rec.call_list=(e.call_list?e.call_list+'\n':'')+add;rec.updated_at=today();
+  toast('Adding '+pool.length+' to '+e.name+'’s list…');
+  try{
+    await save('Employees',rec);
+    for(var i=0;i<pool.length;i++){var lr=Object.assign({},pool[i]);lr.owner=e.name;lr.updated_at=today();await save('Leads',lr);}
+    LEADS=(await getTab('Leads'))||[];EMPLOYEES=(await getTab('Employees'))||[];refreshFilters();renderLeads();renderEmployees();
+    toast(pool.length+' numbers added to '+e.name+'’s list');
+  }catch(err){toast('Could not add leads — check connection',1);}
+}
 
 /* ---------- load ---------- */
 function headcount(){document.getElementById('upd').textContent=live(LEADS).length+' leads · '+live(DEALS).length+' deals · '+live(TASKS).length+' tasks · '+live(EVENTS).length+' events';}
