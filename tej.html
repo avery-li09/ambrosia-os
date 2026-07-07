@@ -108,6 +108,8 @@ function dials(){return fresh()?(parseInt(EMP.dials_today,10)||0):0;}
 function demos(){return fresh()?(parseInt(EMP.demos_today,10)||0):0;}
 function lines(){return String(EMP.call_list||'').split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
 function parseLine(s){var i=s.lastIndexOf(',');if(i<0){var m=s.match(/[0-9][0-9\-\s().+]{6,}/);if(m)return{name:s.replace(m[0],'').trim()||'Lead',phone:m[0].trim()};return{name:s,phone:''};}return{name:s.slice(0,i).trim(),phone:s.slice(i+1).trim()};}
+function demoFor(biz){var u=String((EMP&&EMP.demo_url)||'').trim();if(!u)return '';if(/plumbing-demo|\/demo/i.test(u)){return u+(u.indexOf('?')>=0?'&':'?')+'biz='+encodeURIComponent(biz||'your shop')+'&city='+encodeURIComponent((EMP&&EMP.city)||'')+'&owner=there&type='+encodeURIComponent((EMP&&EMP.niche)||'');}return u;}
+function demoSms(phone,biz){var link=demoFor(biz);var msg='Hey, here is that quick 30 second demo of it answering '+(biz||'your')+' phone, give it a listen: '+link;return 'sms:'+phone+'?&body='+encodeURIComponent(msg);}
 
 async function load(){
   try{
@@ -191,6 +193,7 @@ function render(){
     ls.forEach(function(line){var p=parseLine(line);var tel=p.phone.replace(/[^0-9+]/g,'');
       h+='<div class="call-item"><div class="biz">'+esc(p.name)+'</div>'+(p.phone?'<div class="ph">'+esc(p.phone)+'</div>':'')+'<div class="call-btns">'
         +(tel?'<a class="cbtn call" href="tel:'+esc(tel)+'">Call</a>':'')
+        +((tel&&demoUrl)?'<a class="cbtn book" href="'+esc(demoSms(tel,p.name))+'">Text demo</a>':'')
         +'<button class="cbtn" onclick="markRow(this,\'dial\')">Dialed</button>'
         +'<button class="cbtn book" onclick="markRow(this,\'demo\')">Booked demo</button></div></div>';
     });
@@ -210,7 +213,7 @@ function render(){
 
   // voicemail
   h+='<h2>No answer? Leave this, every time</h2><div class="card"><div class="say">"Hi, this is '+esc(EMP.name||'')+' with Ambrosia. I build the thing that answers your phones and books the job when your crew\'s on a site, so you stop losing calls to the next guy. I\'ll text you a 30-second demo, give it a listen. Talk soon."</div>';
-  if(demoUrl)h+='<a class="demo-btn" style="margin-top:12px" href="'+esc(demoUrl)+'" target="_blank">Open the demo link</a>';
+  if(demoUrl)h+='<a class="demo-btn" style="margin-top:12px" href="'+esc(demoFor('your shop'))+'" target="_blank">Hear a sample demo</a>';
   h+='</div>';
 
   // donts
