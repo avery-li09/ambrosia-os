@@ -1185,9 +1185,8 @@ document.addEventListener('keydown',function(e){
 
 /* ---------- employees ---------- */
 var EMPLOYEES=[],empSeeding=false;
-var EMP_CARD_BASE='https://call.ambrosia-ai.org';
-function empSlug(e){var s=String((e&&e.name)||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');return s||String((e&&e.id)||'').replace(/^emp_|^employees_/,'');}
-function empCardUrl(id){var e=empGet(id)||{id:id};return EMP_CARD_BASE+'/'+encodeURIComponent(empSlug(e)||id);}
+var EMP_CARD_BASE='https://avery-li09.github.io/ambrosia-os/tej.html';
+function empCardUrl(id){return EMP_CARD_BASE+'?e='+encodeURIComponent(id);}
 function empAll(){return live(EMPLOYEES).filter(function(r){return r&&r.name;});}
 function empGet(id){return empAll().filter(function(x){return String(x.id)===String(id);})[0]||null;}
 function empListLines(s){return String(s||'').split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
