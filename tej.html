@@ -96,7 +96,10 @@ var EMP=null;
 var TCOACH=[];
 var CHIPS=['Give me a strong opener','They said not interested, what do I say','I am getting nervous to call','Pump me up'];
 function qp(k){try{return new URLSearchParams(location.search).get(k);}catch(e){return null;}}
-var EID=qp('e')||'emp_tej';
+function slug(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+function pathSeg(){try{var parts=location.pathname.split('/').filter(Boolean);var last=parts.length?decodeURIComponent(parts[parts.length-1]):'';if(/\.(html?|php)$/i.test(last)||last==='ambrosia-os'||last==='ambrosia-call')return '';return last;}catch(e){return '';}}
+var EID=qp('e')||pathSeg()||'tej';
+function isEmp(x,k){if(!x)return false;var id=String(x.id||'');var ks=slug(k);return id===k||id==='emp_'+ks||slug(x.name)===ks||slug(id.replace(/^emp_|^employees_/,''))===ks||slug(id)===ks;}
 function td(){return new Date().toISOString().slice(0,10);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='toast on';clearTimeout(t._h);t._h=setTimeout(function(){t.className='toast';},2400);}
@@ -110,7 +113,7 @@ async function load(){
   try{
     var r=await fetch(API+'/ops-data?tab=Employees&cb='+Date.now());
     var d=await r.json();var rows=Array.isArray(d)?d:(d.data||[]);
-    EMP=rows.filter(function(x){return x&&String(x.id)===EID;})[0]
+    EMP=rows.filter(function(x){return isEmp(x,EID);})[0]
        ||rows.filter(function(x){return x&&String(x.name||'').toLowerCase()==='tej';})[0]
        ||null;
   }catch(e){EMP=null;}
