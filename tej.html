@@ -241,7 +241,7 @@ async function coachSend(){
   var t=document.getElementById('tc-thread');var typing=document.createElement('div');typing.className='tc-msg tc-ai tc-typing';typing.textContent='…';if(t){t.appendChild(typing);t.scrollTop=t.scrollHeight;}
   var ctx={name:EMP.name,niche:EMP.niche,city:EMP.city,directive:EMP.directive};
   try{
-    var r=await fetch(API+'/emp-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:TCOACH.slice(-16),ctx:ctx,e:EID})});
+    var r=await fetch(API+'/employee-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:TCOACH.slice(-16),ctx:ctx,e:EID})});
     var d=await r.json();var reply=(d&&d.reply)?String(d.reply):'Say that again? I want to give you a straight answer.';
     TCOACH.push({role:'assistant',content:reply});saveCoach();paintCoach();
   }catch(e){TCOACH.push({role:'assistant',content:'Trouble connecting right now. Try again in a sec.'});saveCoach();paintCoach();}
