@@ -85,6 +85,18 @@
   .tc-send{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807;font-weight:600;padding:13px 17px;cursor:pointer;font-family:'Inter'}
   .tc-foot{margin-top:8px;text-align:right}
   .tc-new{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
+  /* leaderboard + crown + callback */
+  .crown{background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.04));border:1px solid var(--gold-deep);color:var(--gold-light);padding:11px 14px;margin-bottom:16px;font-size:13.5px;font-weight:600}
+  .lb .lb-prize{font-size:12.5px;color:var(--gold-light);background:var(--surface2);border:1px solid var(--border2);padding:9px 11px;margin-bottom:11px}
+  .lb-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border)}
+  .lb-row:last-child{border-bottom:none}
+  .lb-row.me{background:rgba(201,168,76,.06)}
+  .lb-rank{width:26px;text-align:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--muted);flex:0 0 auto}
+  .lb-name{flex:1;font-weight:600;font-size:14px}
+  .lb-tr{color:var(--gold-light);font-size:12px}
+  .lb-stat{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+  .lb-you{margin-top:11px;font-size:13px;color:var(--gold-light)}
+  .cbtip{margin-top:9px;font-size:13px;line-height:1.5;color:var(--gold-light);background:var(--surface2);border-left:2px solid var(--gold-deep);padding:9px 11px}
 </style>
 </head>
 <body>
@@ -95,6 +107,18 @@ var API='https://n8n.ambrosia-ai.org/webhook';
 var EMP=null;
 var TCOACH=[];
 var CHIPS=['Give me a strong opener','They said not interested, what do I say','I am getting nervous to call','Pump me up'];
+var ALLEMP=[];
+var CYCLE0='2026-07-07';var CYCLE_DAYS=14;
+var TIPS=[
+ 'No answer? That IS the pitch. If you cannot reach the owner, neither can his customers. That call just went to a competitor. A voice agent answers every one.',
+ 'Straight to voicemail. 8 of 10 callers hang up and dial the next guy. That is money walking out the door, and the exact thing you fix on the callback.',
+ 'Too busy to answer you means too busy to answer customers. Say that on the callback. An AI receptionist catches every call while the crew works.',
+ 'Check their website before you call back. Outdated, or no way to book online? That is your in. A clean site plus booking wins them jobs.',
+ 'Owner doing invoices, follow-ups, scheduling by hand? One automation frees him up. Lead with that, not the tech.',
+ 'A no-pickup is a not-yet, not a no. Note the time, try a different window, and open honest: you tried them earlier today.',
+ 'They ignored a call from a number they know. Their customers do the same to them. That lost job is the whole reason your demo matters.',
+ 'Slow to answer usually means slow everywhere: quotes, callbacks, booking. Point to one leak and offer to plug it for free first.'
+];
 function qp(k){try{return new URLSearchParams(location.search).get(k);}catch(e){return null;}}
 function slug(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
 function pathSeg(){try{var parts=location.pathname.split('/').filter(Boolean);var last=parts.length?decodeURIComponent(parts[parts.length-1]):'';if(/\.(html?|php)$/i.test(last)||last==='ambrosia-os'||last==='ambrosia-call')return '';return last;}catch(e){return '';}}
@@ -110,11 +134,31 @@ function lines(){return String(EMP.call_list||'').split(/\n/).map(function(x){re
 function parseLine(s){var i=s.lastIndexOf(',');if(i<0){var m=s.match(/[0-9][0-9\-\s().+]{6,}/);if(m)return{name:s.replace(m[0],'').trim()||'Lead',phone:m[0].trim()};return{name:s,phone:''};}return{name:s.slice(0,i).trim(),phone:s.slice(i+1).trim()};}
 function demoFor(biz){var u=String((EMP&&EMP.demo_url)||'').trim();if(!u)return '';if(/plumbing-demo|\/demo/i.test(u)){return u+(u.indexOf('?')>=0?'&':'?')+'biz='+encodeURIComponent(biz||'your shop')+'&city='+encodeURIComponent((EMP&&EMP.city)||'')+'&owner=there&type='+encodeURIComponent((EMP&&EMP.niche)||'');}return u;}
 function demoSms(phone,biz){var link=demoFor(biz);var msg='Hey, here is that quick 30 second demo of it answering '+(biz||'your')+' phone, give it a listen: '+link;return 'sms:'+phone+'?&body='+encodeURIComponent(msg);}
+/* cycle + leaderboard helpers */
+function dnum(ds){var p=String(ds||'').slice(0,10).split('-');if(p.length<3)return 0;return Date.UTC(+p[0],+p[1]-1,+p[2])/86400000;}
+function dstr(n){return new Date(n*86400000).toISOString().slice(0,10);}
+function cycleStart(ds){var t=dnum(ds||td());var b=dnum(CYCLE0);if(t<b)return CYCLE0;return dstr(b+Math.floor((t-b)/CYCLE_DAYS)*CYCLE_DAYS);}
+function cycStats(e){var cs=cycleStart(td());if(String((e&&e.cycle_start)||'').slice(0,10)!==cs)return {d:0,m:0};return {d:parseInt(e.cycle_dials,10)||0,m:parseInt(e.cycle_demos,10)||0};}
+function callers(){return (ALLEMP||[]).filter(function(x){return x&&x.name&&String(x.deleted||'').toLowerCase()!=='yes';});}
+function ranked(){return callers().map(function(e){var st=cycStats(e);return {e:e,d:st.d,m:st.m,tr:parseInt(e.trophies,10)||0};}).sort(function(a,b){return (b.m-a.m)||(b.d-a.d)||String(a.e.name).localeCompare(String(b.e.name));});}
+function cfgReward(){var c=(ALLEMP||[]).filter(function(x){return x&&String(x.id)==='_config';})[0];return c?String(c.cycle_reward||''):'';}
+function amILeading(){var rk=ranked();return rk.length&&EMP&&String(rk[0].e.id)===String(EMP.id)&&(rk[0].m>0||rk[0].d>0);}
+function ensureCycle(){var cs=cycleStart(td());if(String(EMP.cycle_start||'').slice(0,10)!==cs){EMP.cycle_start=cs;EMP.cycle_dials=0;EMP.cycle_demos=0;}}
+/* callback list */
+function cbKey(){return 'ambrosia_cb_'+EID;}
+function loadCB(){try{return JSON.parse(localStorage.getItem(cbKey())||'[]');}catch(e){return [];}}
+function saveCB(a){try{localStorage.setItem(cbKey(),JSON.stringify(a.slice(-50)));}catch(e){}}
+function tipFor(name){var h=0,s=String(name||'x');for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}return TIPS[h%TIPS.length];}
+function addCB(name,phone){var a=loadCB();var k=(name+'|'+phone).toLowerCase();if(a.some(function(x){return (x.name+'|'+x.phone).toLowerCase()===k;}))return;a.push({name:name,phone:phone,tip:tipFor(name),ts:td()});saveCB(a);}
+function rmCB(i){var a=loadCB();a.splice(i,1);saveCB(a);renderCB();}
+function cbBook(i){bump('demo');var a=loadCB();a.splice(i,1);saveCB(a);renderCB();}
+function naFlow(el,idx){var p=parseLine(lines()[idx]||'');bump('dial');addCB(p.name,p.phone);var row=el.closest('.call-item');if(row)row.classList.add('done');toast('Added to Call back. See the tip below.');renderCB();}
 
 async function load(){
   try{
     var r=await fetch(API+'/ops-data?tab=Employees&cb='+Date.now());
     var d=await r.json();var rows=Array.isArray(d)?d:(d.data||[]);
+    ALLEMP=rows;
     EMP=rows.filter(function(x){return isEmp(x,EID);})[0]
        ||rows.filter(function(x){return x&&String(x.name||'').toLowerCase()==='tej';})[0]
        ||null;
@@ -125,10 +169,12 @@ async function load(){
 }
 async function bump(kind){
   if(!fresh()){EMP.dials_today=0;EMP.demos_today=0;EMP.last_active=td();}
+  ensureCycle();
   EMP.dials_today=(parseInt(EMP.dials_today,10)||0)+1;
-  if(kind==='demo')EMP.demos_today=(parseInt(EMP.demos_today,10)||0)+1;
+  EMP.cycle_dials=(parseInt(EMP.cycle_dials,10)||0)+1;
+  if(kind==='demo'){EMP.demos_today=(parseInt(EMP.demos_today,10)||0)+1;EMP.cycle_demos=(parseInt(EMP.cycle_demos,10)||0)+1;}
   EMP.last_active=td();EMP.updated_at=td();
-  paintCounters();
+  paintCounters();paintLeaderboard();
   toast(kind==='demo'?'Demo booked. Nice.':'Dial logged.');
   try{await fetch(API+'/ops-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tab:'Employees',row:EMP})});}catch(e){}
 }
@@ -147,6 +193,8 @@ function render(){
   h+='<h1>Hey '+esc(EMP.name||'there')+' 👋</h1>';
   h+='<div class="status"><span class="dot" style="background:'+(on?'#2FA79E':'#8A8A82')+'"></span>'+(on?'You\'re calling ':'Paused — ')+esc(noun)+' in '+esc(EMP.city||'your area')+'</div>';
 
+  if(amILeading())h+='<div class="crown">👑 You\'re the top caller this cycle. Don\'t let it slip.</div>';
+
   if(EMP.directive)h+='<div class="directive">'+esc(EMP.directive)+'</div>';
 
   // counters
@@ -156,6 +204,9 @@ function render(){
   h+='<div class="ctr"><div class="n" id="m-num">'+demos()+'</div><div class="l">Demos booked</div></div>';
   h+='</div>';
   h+='<div class="logrow"><button class="logbtn" onclick="bump(\'dial\')">+ Log a dial</button><button class="logbtn gold" onclick="bump(\'demo\')">+ Booked a demo</button></div>';
+
+  // leaderboard
+  h+='<div id="lb-wrap"></div>';
 
   // coach
   h+='<h2>Your coach</h2><div class="tc"><div class="tc-thread" id="tc-thread"></div>';
@@ -190,16 +241,20 @@ function render(){
   var ls=lines();
   if(ls.length){
     h+='<h2>Your call list ('+ls.length+')</h2>';
-    ls.forEach(function(line){var p=parseLine(line);var tel=p.phone.replace(/[^0-9+]/g,'');
+    ls.forEach(function(line,idx){var p=parseLine(line);var tel=p.phone.replace(/[^0-9+]/g,'');
       h+='<div class="call-item"><div class="biz">'+esc(p.name)+'</div>'+(p.phone?'<div class="ph">'+esc(p.phone)+'</div>':'')+'<div class="call-btns">'
         +(tel?'<a class="cbtn call" href="tel:'+esc(tel)+'">Call</a>':'')
         +((tel&&demoUrl)?'<a class="cbtn book" href="'+esc(demoSms(tel,p.name))+'">Text demo</a>':'')
         +'<button class="cbtn" onclick="markRow(this,\'dial\')">Dialed</button>'
+        +'<button class="cbtn" onclick="naFlow(this,'+idx+')">No answer</button>'
         +'<button class="cbtn book" onclick="markRow(this,\'demo\')">Booked demo</button></div></div>';
     });
   }else{
     h+='<h2>Your call list</h2><div class="card"><div class="say" style="color:var(--muted)">No list set yet. Ask Avery or Tolu to load your numbers, or work your own and tap <b>+ Log a dial</b> above as you go.</div></div>';
   }
+
+  // call-back pile
+  h+='<div id="cb-wrap"></div>';
 
   // objections
   h+='<h2>If they push back</h2>';
@@ -227,9 +282,41 @@ function render(){
   h+='<footer>Ambrosia AI · you got this, '+esc(EMP.name||'')+'<br>Slow voice. Make it about them. Get the demo yes.</footer>';
 
   document.getElementById('app').innerHTML=h;
-  paintCoach();
+  paintCoach();paintLeaderboard();renderCB();
 }
 function obj(q,a){return '<details><summary>'+esc(q)+'</summary><p>'+esc(a)+'</p></details>';}
+function paintLeaderboard(){
+  var w=document.getElementById('lb-wrap');if(!w)return;
+  var rk=ranked();var reward=cfgReward();var myId=EMP?String(EMP.id):'';
+  var lead=rk[0];var iLead=lead&&String(lead.e.id)===myId&&(lead.m>0||lead.d>0);
+  var h='<h2>Leaderboard · this 2 weeks</h2><div class="card lb">';
+  if(reward)h+='<div class="lb-prize">🏆 Top caller this cycle earns: <b>'+esc(reward)+'</b></div>';
+  if(!rk.length){h+='<div class="say" style="color:var(--muted)">No callers yet.</div>';}
+  rk.forEach(function(r,i){var me=String(r.e.id)===myId;var crown=(i===0&&(r.m>0||r.d>0));
+    h+='<div class="lb-row'+(me?' me':'')+'"><span class="lb-rank">'+(crown?'👑':(i+1))+'</span>'
+      +'<span class="lb-name">'+esc(r.e.name)+(me?' (you)':'')+(r.tr>0?' <span class="lb-tr">'+r.tr+'🏆</span>':'')+'</span>'
+      +'<span class="lb-stat">'+r.m+' demo'+(r.m===1?'':'s')+' · '+r.d+' dial'+(r.d===1?'':'s')+'</span></div>';
+  });
+  if(iLead)h+='<div class="lb-you">You\'re #1 right now.'+(reward?' Hold it and you earn: '+esc(reward)+'.':' Keep it up.')+'</div>';
+  else if(rk.length>1&&reward)h+='<div class="lb-you">Top the board this cycle and it\'s yours.</div>';
+  h+='</div>';
+  w.innerHTML=h;
+}
+function renderCB(){
+  var w=document.getElementById('cb-wrap');if(!w)return;
+  var a=loadCB();if(!a.length){w.innerHTML='';return;}
+  var demoUrl=String((EMP&&EMP.demo_url)||'').trim();
+  var h='<h2>Call back ('+a.length+')</h2>';
+  a.forEach(function(it,i){var tel=String(it.phone||'').replace(/[^0-9+]/g,'');
+    h+='<div class="call-item"><div class="biz">'+esc(it.name||'Lead')+'</div>'+(it.phone?'<div class="ph">'+esc(it.phone)+'</div>':'')
+      +'<div class="cbtip">'+esc(it.tip||'')+'</div><div class="call-btns">'
+      +(tel?'<a class="cbtn call" href="tel:'+esc(tel)+'">Call again</a>':'')
+      +((tel&&demoUrl)?'<a class="cbtn book" href="'+esc(demoSms(tel,it.name))+'">Text demo</a>':'')
+      +'<button class="cbtn book" onclick="cbBook('+i+')">Booked</button>'
+      +'<button class="cbtn" onclick="rmCB('+i+')">Remove</button></div></div>';
+  });
+  w.innerHTML=h;
+}
 
 /* ---------- coach (separate Haiku, phones only) ---------- */
 function tcKey(){return 'ambrosia_tej_coach_'+EID;}
