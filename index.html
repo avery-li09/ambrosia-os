@@ -381,6 +381,12 @@
   .emp-field .fv{font-size:13px;color:var(--text);white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);padding:10px 12px}
   .emp-empty{color:var(--muted);font-size:13px;padding:24px;background:var(--surface);border:1px dashed var(--border2);text-align:center;line-height:1.7}
   .emp-empty b{color:var(--gold-light)}
+  .lb-row{display:flex;align-items:center;gap:11px;padding:10px 4px;border-bottom:1px solid var(--border)}
+  .lb-row:last-child{border-bottom:none}
+  .lb-rank{width:28px;text-align:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--muted);flex:0 0 auto;font-size:15px}
+  .lb-name{flex:1;font-weight:600;font-size:14px}
+  .lb-tr{color:var(--gold-light);font-size:12px}
+  .lb-stat{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1190,10 +1196,32 @@ function empCardUrl(id){return EMP_CARD_BASE+'?e='+encodeURIComponent(id);}
 function empAll(){return live(EMPLOYEES).filter(function(r){return r&&r.name;});}
 function empGet(id){return empAll().filter(function(x){return String(x.id)===String(id);})[0]||null;}
 function empListLines(s){return String(s||'').split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
+var EMP_CYCLE0='2026-07-07',EMP_CYCLE_DAYS=14;
+function empDnum(ds){var p=String(ds||'').slice(0,10).split('-');if(p.length<3)return 0;return Date.UTC(+p[0],+p[1]-1,+p[2])/86400000;}
+function empDstr(n){return new Date(n*86400000).toISOString().slice(0,10);}
+function empCycleStart(ds){var t=empDnum(ds||today());var b=empDnum(EMP_CYCLE0);if(t<b)return EMP_CYCLE0;return empDstr(b+Math.floor((t-b)/EMP_CYCLE_DAYS)*EMP_CYCLE_DAYS);}
+function empCyc(e){var cs=empCycleStart(today());if(String((e&&e.cycle_start)||'').slice(0,10)!==cs)return {d:0,m:0};return {d:parseInt(e.cycle_dials,10)||0,m:parseInt(e.cycle_demos,10)||0};}
+function empRanked(){return empAll().map(function(e){var c=empCyc(e);return {e:e,d:c.d,m:c.m,tr:parseInt(e.trophies,10)||0};}).sort(function(a,b){return (b.m-a.m)||(b.d-a.d)||String(a.e.name).localeCompare(String(b.e.name));});}
+function empCfg(){return live(EMPLOYEES).filter(function(x){return x&&String(x.id)==='_config';})[0]||null;}
+function empReward(){var c=empCfg();return c?String(c.cycle_reward||''):'';}
+async function empSaveReward(){var v=String(gv('emp-reward')||'').trim();var c=empCfg()||{id:'_config'};var rec=Object.assign({},c);rec.cycle_reward=v;rec.updated_at=today();try{await save('Employees',rec);EMPLOYEES=(await getTab('Employees'))||[];toast('Cycle reward saved');renderEmployees();}catch(e){toast('Save failed',1);}}
+function empLeaderboardHtml(){
+  var rk=empRanked(),reward=empReward(),cs=empCycleStart(today());
+  var h='<div class="emp-card"><div class="emp-head" style="margin-bottom:6px"><div class="emp-id"><div><h3>🏆 Leaderboard</h3>'
+    +'<div class="r">This 2-week cycle · resets '+esc(empDstr(empDnum(cs)+EMP_CYCLE_DAYS))+'</div></div></div></div>';
+  if(rk.length){rk.forEach(function(r,i){var crown=(i===0&&(r.m>0||r.d>0));
+    h+='<div class="lb-row"><span class="lb-rank">'+(crown?'👑':(i+1))+'</span><span class="lb-name">'+esc(r.e.name)+(r.tr>0?' <span class="lb-tr">'+r.tr+'🏆</span>':'')+'</span><span class="lb-stat">'+r.m+' demos · '+r.d+' dials</span></div>';
+  });}else{h+='<div class="hint">No callers yet.</div>';}
+  h+='<div class="emp-field" style="margin-top:14px"><div class="fl">Reward for this cycle\'s top caller</div>'
+    +'<div style="display:flex;gap:8px"><input id="emp-reward" value="'+esc(reward)+'" placeholder="e.g. a new perk on their card" style="flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 12px;font-family:Inter;font-size:13px">'
+    +'<button class="ghost" onclick="empSaveReward()">Save</button></div>'
+    +'<div class="hint" style="margin-top:6px">Shows on the leader\'s card as what they\'re playing for. Winner takes it every 2 weeks.</div></div></div>';
+  return h;
+}
 async function renderEmployees(){
   var box=document.getElementById('emp-list');if(!box)return;
   var list=empAll();
-  if(list.length){box.innerHTML=list.map(empCardHtml).join('');return;}
+  if(list.length){box.innerHTML=empLeaderboardHtml()+list.map(empCardHtml).join('');return;}
   if(!empSeeding){
     empSeeding=true;box.innerHTML='<div class="emp-empty">Setting up Tej…</div>';
     var seed={id:'emp_tej',name:'Tej',active:'yes',niche:'plumbing',city:'Calgary',target_dials:'30',demo_url:'',
