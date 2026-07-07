@@ -70,6 +70,21 @@
   .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--gold-deep);color:var(--gold-light);padding:11px 18px;font-size:13px;transition:transform .25s;z-index:50;max-width:90%}
   .toast.on{transform:translateX(-50%) translateY(0)}
   .load{text-align:center;color:var(--muted);padding:60px 0;font-size:14px}
+  /* coach */
+  .tc{background:var(--surface);border:1px solid var(--border);padding:14px}
+  .tc-thread{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+  .tc-hint{color:var(--muted);font-size:13px;padding:10px 2px;line-height:1.5}
+  .tc-msg{padding:10px 13px;font-size:14px;line-height:1.5;max-width:88%;white-space:pre-wrap;word-wrap:break-word}
+  .tc-me{align-self:flex-end;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#080807;border-radius:13px 13px 3px 13px}
+  .tc-ai{align-self:flex-start;background:var(--surface3);border:1px solid var(--border2);border-radius:13px 13px 13px 3px}
+  .tc-typing{color:var(--muted)}
+  .tc-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+  .tc-chips button{background:var(--surface2);border:1px solid var(--border2);color:var(--gold-light);font-size:12px;padding:8px 11px;cursor:pointer;font-family:'Inter'}
+  .tc-input-row{display:flex;gap:8px}
+  .tc-input-row input{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:13px;font-family:'Inter';font-size:15px}
+  .tc-send{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807;font-weight:600;padding:13px 17px;cursor:pointer;font-family:'Inter'}
+  .tc-foot{margin-top:8px;text-align:right}
+  .tc-new{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -78,6 +93,8 @@
 <script>
 var API='https://n8n.ambrosia-ai.org/webhook';
 var EMP=null;
+var TCOACH=[];
+var CHIPS=['Give me a strong opener','They said not interested, what do I say','I am getting nervous to call','Pump me up'];
 function qp(k){try{return new URLSearchParams(location.search).get(k);}catch(e){return null;}}
 var EID=qp('e')||'emp_tej';
 function td(){return new Date().toISOString().slice(0,10);}
@@ -134,6 +151,12 @@ function render(){
   h+='<div class="ctr"><div class="n" id="m-num">'+demos()+'</div><div class="l">Demos booked</div></div>';
   h+='</div>';
   h+='<div class="logrow"><button class="logbtn" onclick="bump(\'dial\')">+ Log a dial</button><button class="logbtn gold" onclick="bump(\'demo\')">+ Booked a demo</button></div>';
+
+  // coach
+  h+='<h2>Your coach</h2><div class="tc"><div class="tc-thread" id="tc-thread"></div>';
+  h+='<div class="tc-chips">'+CHIPS.map(function(c,i){return '<button onclick="coachChip('+i+')">'+esc(c.length>20?c.slice(0,18)+'…':c)+'</button>';}).join('')+'</div>';
+  h+='<div class="tc-input-row"><input id="tc-input" placeholder="Ask your coach…" onkeydown="if(event.key===\'Enter\'){event.preventDefault();coachSend();}"><button class="tc-send" onclick="coachSend()">Send</button></div>';
+  h+='<div class="tc-foot"><button class="tc-new" onclick="coachNew()">New chat</button></div></div>';
 
   // the one rule
   h+='<h2>The one rule</h2>';
@@ -198,8 +221,33 @@ function render(){
   h+='<footer>Ambrosia AI · you got this, '+esc(EMP.name||'')+'<br>Slow voice. Make it about them. Get the demo yes.</footer>';
 
   document.getElementById('app').innerHTML=h;
+  paintCoach();
 }
 function obj(q,a){return '<details><summary>'+esc(q)+'</summary><p>'+esc(a)+'</p></details>';}
+
+/* ---------- coach (separate Haiku, phones only) ---------- */
+function tcKey(){return 'ambrosia_tej_coach_'+EID;}
+function loadCoach(){try{TCOACH=JSON.parse(localStorage.getItem(tcKey())||'[]');}catch(e){TCOACH=[];}}
+function saveCoach(){try{localStorage.setItem(tcKey(),JSON.stringify(TCOACH.slice(-40)));}catch(e){}}
+function paintCoach(){var t=document.getElementById('tc-thread');if(!t)return;
+  if(!TCOACH.length){t.innerHTML='<div class="tc-hint">Stuck on a call? Ask me anything. I only know the phones, not the business side.</div>';return;}
+  t.innerHTML=TCOACH.map(function(m){return '<div class="tc-msg tc-'+(m.role==='user'?'me':'ai')+'">'+esc(m.content)+'</div>';}).join('');
+  t.scrollTop=t.scrollHeight;}
+function coachChip(i){var inp=document.getElementById('tc-input');if(inp){inp.value=CHIPS[i]||'';coachSend();}}
+function coachNew(){TCOACH=[];saveCoach();paintCoach();}
+async function coachSend(){
+  var inp=document.getElementById('tc-input');if(!inp)return;var q=String(inp.value||'').trim();if(!q)return;
+  inp.value='';TCOACH.push({role:'user',content:q});saveCoach();paintCoach();
+  var t=document.getElementById('tc-thread');var typing=document.createElement('div');typing.className='tc-msg tc-ai tc-typing';typing.textContent='…';if(t){t.appendChild(typing);t.scrollTop=t.scrollHeight;}
+  var ctx={name:EMP.name,niche:EMP.niche,city:EMP.city,directive:EMP.directive};
+  try{
+    var r=await fetch(API+'/emp-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:TCOACH.slice(-16),ctx:ctx,e:EID})});
+    var d=await r.json();var reply=(d&&d.reply)?String(d.reply):'Say that again? I want to give you a straight answer.';
+    TCOACH.push({role:'assistant',content:reply});saveCoach();paintCoach();
+  }catch(e){TCOACH.push({role:'assistant',content:'Trouble connecting right now. Try again in a sec.'});saveCoach();paintCoach();}
+}
+
+loadCoach();
 load();
 </script>
 </body>
