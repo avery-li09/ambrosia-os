@@ -148,7 +148,14 @@ var TIPS=[
 ];
 function qp(k){try{return new URLSearchParams(location.search).get(k);}catch(e){return null;}}
 function slug(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
-function pathSeg(){try{var parts=location.pathname.split('/').filter(Boolean);var last=parts.length?decodeURIComponent(parts[parts.length-1]):'';if(/\.(html?|php)$/i.test(last)||last==='ambrosia-os'||last==='ambrosia-call')return '';return last;}catch(e){return '';}}
+/* who this card is for: ?e=id wins, else the URL tells us — /andrew AND /andrew.html both mean Andrew */
+function pathSeg(){try{
+  var parts=location.pathname.split('/').filter(Boolean);
+  var last=parts.length?decodeURIComponent(parts[parts.length-1]):'';
+  last=last.replace(/\.(html?|php)$/i,'');
+  if(!last||last==='ambrosia-os'||last==='ambrosia-call'||last==='index'||last==='404')return '';
+  return last;
+}catch(e){return '';}}
 var EID=qp('e')||pathSeg()||'tej';
 function isEmp(x,k){if(!x)return false;var id=String(x.id||'');var ks=slug(k);return id===k||id==='emp_'+ks||slug(x.name)===ks||slug(id.replace(/^emp_|^employees_/,''))===ks||slug(id)===ks;}
 /* local calendar date in Mountain Time (NOT UTC — UTC rolls over at 6pm local and wipes the day) */
