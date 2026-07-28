@@ -1191,6 +1191,19 @@ document.addEventListener('keydown',function(e){
 
 /* ---------- employees ---------- */
 var EMPLOYEES=[],empSeeding=false;
+var CALLLOG=[];
+var OC_LABEL={interested:'Interested',booked:'Booked demo',no_answer:'No answer',not_interested:'Not interested'};
+/* every result a caller has tapped on their card, newest first */
+function empLog(name){
+  var n=String(name||'').trim().toLowerCase();
+  return live(CALLLOG).filter(function(r){return String(r.employee||'').trim().toLowerCase()===n;})
+    .sort(function(a,b){return String(b.updated_at||'').localeCompare(String(a.updated_at||''));});
+}
+function empTally(rows){
+  var t={interested:0,booked:0,no_answer:0,not_interested:0};
+  rows.forEach(function(r){var o=String(r.outcome||'');if(t[o]!=null)t[o]++;});
+  return t;
+}
 var EMP_CARD_BASE='https://avery-li09.github.io/ambrosia-os/tej.html';
 function empCardUrl(id){return EMP_CARD_BASE+'?e='+encodeURIComponent(id);}
 function empAll(){return live(EMPLOYEES).filter(function(r){return r&&r.name;});}
@@ -1220,6 +1233,8 @@ function empLeaderboardHtml(){
 }
 async function renderEmployees(){
   var box=document.getElementById('emp-list');if(!box)return;
+  /* pull the call log fresh every time this tab paints, so results show up as they tap them */
+  try{var cl=await getTab('CallLog');if(cl)CALLLOG=cl;}catch(e){}
   var list=empAll();
   if(list.length){box.innerHTML=empLeaderboardHtml()+list.map(empCardHtml).join('');return;}
   if(!empSeeding){
@@ -1241,7 +1256,8 @@ function empCardHtml(e){
   var id=esc(e.id);
   var h='<div class="emp-card">';
   h+='<div class="emp-head"><div class="emp-id"><div class="emp-av">'+esc(ini)+'</div><div><h3>'+esc(e.name)+'</h3>'
-    +'<div class="r"><span class="emp-dot '+(on?'emp-on':'emp-off')+'"></span>'+(on?'Active':'Paused')+' · calling '+esc(e.niche||'—')+' · '+esc(e.city||'—')+'</div></div></div>';
+    +'<div class="r"><span class="emp-dot '+(on?'emp-on':'emp-off')+'"></span>'+(on?'Active':'Paused')+' · '
+    +((e.niche||e.city)?('calling '+esc([e.niche,e.city].filter(Boolean).join(' · '))):'calling whatever leads you send')+'</div></div></div>';
   h+='<div class="emp-actions" style="display:flex;gap:8px;flex-wrap:wrap">'
     +'<button class="add" style="padding:8px 13px" onclick="empFillLeads(\''+id+'\')"><span class="plus">+</span> Fill from new leads</button>'
     +'<button class="ghost" onclick="empCopy(\''+id+'\')">Copy his link</button>'
@@ -1251,6 +1267,27 @@ function empCardHtml(e){
     +'<div class="emp-stat"><div class="n">'+dials+(tgt?' <small style="font-size:12px;color:var(--muted);font-family:Inter">/ '+tgt+'</small>':'')+'</div><div class="l">Dials today</div></div>'
     +'<div class="emp-stat"><div class="n">'+demos+'</div><div class="l">Demos booked</div></div>'
     +'<div class="emp-stat"><div class="n">'+listN+'</div><div class="l">On his list</div></div></div>';
+  // what he actually logged, lead by lead
+  var lg=empLog(e.name), tl=empTally(lg);
+  h+='<div class="emp-field"><div class="fl">Results he logged — '+lg.length+' of '+listN+' leads worked</div>';
+  if(!lg.length){
+    h+='<div class="fv" style="color:var(--muted)">Nothing logged yet. He taps a result on each lead and it lands here.</div>';
+  }else{
+    h+='<div class="fv" style="margin-bottom:9px">'
+      +'<b style="color:#7BD6CE">'+tl.interested+'</b> interested · '
+      +'<b style="color:var(--gold-light)">'+tl.booked+'</b> booked · '
+      +'<b style="color:#B9B9AE">'+tl.no_answer+'</b> no answer · '
+      +'<b style="color:#EE93B4">'+tl.not_interested+'</b> not interested</div>';
+    h+='<div class="fv" style="display:flex;flex-direction:column;gap:5px">';
+    lg.forEach(function(r){
+      var o=String(r.outcome||''), col={interested:'#7BD6CE',booked:'#E8D5A3',no_answer:'#B9B9AE',not_interested:'#EE93B4'}[o]||'var(--muted)';
+      h+='<div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:4px">'
+        +'<span>'+esc(r.business||'Lead')+(r.phone?' <span style="color:var(--muted);font-size:12px">'+esc(r.phone)+'</span>':'')+'</span>'
+        +'<span style="color:'+col+';font-size:12px;font-weight:600;white-space:nowrap">'+esc(OC_LABEL[o]||o||'—')+'</span></div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
   if(e.directive)h+='<div class="emp-field"><div class="fl">Today’s focus</div><div class="fv">'+esc(e.directive)+'</div></div>';
   h+='<div class="emp-field"><div class="fl">Call list — only he sees this, not your CRM</div><div class="fv">'
     +(e.call_list?esc(e.call_list):'<span style="color:var(--muted)">Empty. Edit and add lines like: Ace Plumbing, 403-555-1234</span>')+'</div></div>';
