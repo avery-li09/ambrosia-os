@@ -387,6 +387,99 @@
   .lb-name{flex:1;font-weight:600;font-size:14px}
   .lb-tr{color:var(--gold-light);font-size:12px}
   .lb-stat{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+  /* ============ MARKETING + OFFERS (added 2026-08-04) ============ */
+  /* nav group labels: makes the sales/marketing split visible in the rail */
+  .navsep{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-deep);
+    padding:14px 12px 5px;opacity:0;transition:opacity .18s;white-space:nowrap;pointer-events:none}
+  body.side-expanded .navsep{opacity:1}
+  .navsep::after{content:'';display:block;height:1px;margin-top:5px;
+    background:linear-gradient(90deg,rgba(201,168,76,.35),transparent)}
+
+  /* scoreboard: 5 metrics, each with a target and a state colour */
+  .sb{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:20px}
+  .sb .tile .n.zero{color:var(--danger)}
+  .sb .tile .n.good{color:var(--gold-light)}
+  .sb .tile .sub{font-size:11px;color:var(--muted);margin-top:6px}
+
+  /* content queue + asset backlog rows */
+  .qrow{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}
+  .qrow:last-child{border-bottom:0}
+  .qrow .when{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);
+    min-width:74px;flex:0 0 auto}
+  .qrow .what{flex:1;min-width:0}
+  .qrow .what b{display:block;font-size:14px;color:var(--text);font-weight:600}
+  .qrow .what span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;
+    overflow:hidden;text-overflow:ellipsis}
+  .qrow .pill{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;
+    border:1px solid var(--border2);color:var(--muted);flex:0 0 auto;border-radius:2px}
+  .qrow .pill.leak{color:var(--c3);border-color:rgba(217,102,63,.4)}
+  .qrow .pill.proof{color:var(--c4);border-color:rgba(47,167,158,.4)}
+  .qrow .pill.secret{color:var(--c2);border-color:rgba(74,147,214,.4)}
+  .qrow .pill.founder{color:var(--c5);border-color:rgba(155,114,224,.4)}
+  .qrow .pill.done{color:#161610;background:var(--gold);border-color:transparent}
+  .mini{background:none;border:1px solid var(--border2);color:var(--text);font-family:'Inter',sans-serif;
+    font-size:12px;padding:7px 12px;cursor:pointer;transition:all .15s var(--ease);flex:0 0 auto;
+    border-radius:2px;white-space:nowrap}
+  .mini:hover{border-color:var(--gold);color:var(--gold)}
+  .mini[disabled]{opacity:.4;cursor:default}
+  .mini[disabled]:hover{border-color:var(--border2);color:var(--text)}
+
+  /* offer ladder cards */
+  .offers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+  .offer{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--border2);
+    padding:20px;transition:border-color .25s,transform .2s;position:relative}
+  .offer:hover{transform:translateY(-3px);border-color:var(--border2)}
+  .offer.flag{border-top-color:var(--gold);background:linear-gradient(160deg,var(--surface3),var(--surface))}
+  .offer .tag{position:absolute;top:-1px;right:14px;background:var(--gold);color:#161610;
+    font-size:9px;letter-spacing:.13em;text-transform:uppercase;padding:3px 8px;font-weight:700}
+  .offer h4{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--text)}
+  .offer .leakline{font-size:12px;color:var(--muted);margin-top:5px;min-height:32px}
+  .offer .price{font-family:'Playfair Display',serif;font-size:31px;color:var(--gold-light);
+    margin-top:12px;font-variant-numeric:tabular-nums;line-height:1.25}
+  .offer .price small{font-size:14px;color:var(--muted);font-family:'Inter',sans-serif}
+  .offer .setup{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .offer .yr{font-size:11px;color:var(--gold-deep);margin-top:10px;padding-top:9px;
+    border-top:1px solid var(--border)}
+
+  /* quote builder */
+  .qb{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .qb label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin:12px 0 5px}
+  .qb select,.qb input{width:100%;background:var(--surface2);border:1px solid var(--border2);
+    color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:10px 11px}
+  .qb select:focus,.qb input:focus{outline:none;border-color:var(--gold)}
+  .qbout{background:var(--surface2);border:1px solid var(--border2);padding:18px}
+  .qbline{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;
+    border-bottom:1px solid var(--border);font-size:13.5px}
+  .qbline:last-of-type{border-bottom:0}
+  .qbline span{color:var(--muted)}
+  .qbline b{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);
+    font-variant-numeric:tabular-nums}
+  .qbnote{font-size:12px;line-height:1.5;color:var(--muted);margin-top:12px;padding-top:12px;
+    border-top:1px solid var(--border)}
+  .qbnote.warn{color:var(--c3)}
+  .qbnote.ok{color:var(--c4)}
+
+  /* promo calendar */
+  .promo{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .promo:last-child{border-bottom:0}
+  .promo .win{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);
+    min-width:112px;flex:0 0 auto;padding-top:2px}
+  .promo b{font-size:14px;color:var(--text);display:block}
+  .promo p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+  .promo .now{color:#161610;background:var(--gold);padding:1px 6px;font-size:9px;
+    letter-spacing:.1em;text-transform:uppercase;margin-left:7px;vertical-align:2px}
+
+  @media(max-width:1000px){
+    .sb{grid-template-columns:repeat(2,1fr)}
+    .offers{grid-template-columns:1fr}
+    .qb{grid-template-columns:1fr}
+  }
+  @media(max-width:720px){
+    .qrow{flex-wrap:wrap}
+    .qrow .when{min-width:0}
+    .promo{flex-direction:column;gap:4px}
+  }
 </style>
 </head>
 <body>
@@ -394,6 +487,7 @@
   <div class="side-top"><span class="side-logo">A</span><button class="side-toggle" onclick="toggleSidebar()" title="Expand / collapse" id="side-toggle">&#8249;</button></div>
   <nav class="side-nav" id="tabs">
     <button data-t="overview" class="on"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg><span class="lbl">Overview</span></button>
+    <div class="navsep">Sales</div>
     <button data-t="call"><svg viewBox="0 0 16 16"><path d="M4.5 2.5l2 .5 1 2.5-1.5 1a7 7 0 003 3l1-1.5 2.5 1 .5 2c0 1-1 1.7-2 1.5C6 12 4 8 3 5c-.2-1 .5-2 1.5-2.5z"/></svg><span class="lbl">Call Mode</span></button>
     <button data-t="coach"><svg viewBox="0 0 16 16"><path d="M2.5 3h11v8h-6l-3 2.5V11h-2z"/></svg><span class="lbl">Coach</span></button>
     <button data-t="insights"><svg viewBox="0 0 16 16"><path d="M2 14V2M2 14h12M4.5 11l3-3 2.5 2 3.5-4.5"/></svg><span class="lbl">Insights</span></button>
@@ -407,6 +501,9 @@
     <button data-t="demos"><svg viewBox="0 0 16 16"><path d="M4.5 2.5l2 .5 1 2.5-1.5 1a7 7 0 003 3l1-1.5 2.5 1 .5 2c0 1-1 1.7-2 1.5C6 12 4 8 3 5c-.2-1 .5-2 1.5-2.5z"/></svg><span class="lbl">Demos</span></button>
     <button data-t="clients"><svg viewBox="0 0 16 16"><path d="M8 2l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.8 4.3 13.4l.8-4.2L2 6.4l4.2-.5z"/></svg><span class="lbl">Clients</span></button>
     <button data-t="employees"><svg viewBox="0 0 16 16"><circle cx="5.5" cy="5" r="2.3"/><circle cx="11.2" cy="6" r="1.9"/><path d="M1.5 13.2c0-2.5 1.9-3.8 4-3.8s4 1.3 4 3.8M10 13.2c0-1.7.7-2.9 2.1-3.3"/></svg><span class="lbl">Employees</span></button>
+    <div class="navsep">Marketing</div>
+    <button data-t="marketing"><svg viewBox="0 0 16 16"><path d="M2.5 6.5h3l5-3v9l-5-3h-3z"/><path d="M12.5 6v4"/></svg><span class="lbl">Marketing</span></button>
+    <button data-t="offers"><svg viewBox="0 0 16 16"><path d="M8.5 1.8l5.7 5.7-6.7 6.7-5.7-5.7V1.8z"/><circle cx="5.4" cy="5.4" r="1.1"/></svg><span class="lbl">Offers</span></button>
   </nav>
 </aside>
 <div class="side-backdrop" id="side-backdrop" onclick="closeSide()"></div>
@@ -665,7 +762,8 @@
     <div class="modhead"><div class="htitle"><div class="tick"></div><div><h2>Clients</h2><div class="hint">Live builds and the pipeline to paid.</div></div></div></div>
     <div class="clientcard"><h3>Western Mechatronics</h3><div class="meta">Robotics org · Active · free build for proof</div><p>Parts-tracking + budget/credit automation (n8n) and a website rebuild. Proof asset. Next: capture a testimonial.</p></div>
     <div class="clientcard"><h3>Chick-fil-A (Macleod)</h3><div class="meta">QSR · Live · free build for proof</div><p>AI voice agent live and taking real calls. Proof asset. Blocker: manager hasn't tested it; testimonial not captured.</p></div>
-    <div class="clientcard" style="border-left-color:var(--muted)"><h3>+ New client</h3><div class="meta">Pipeline</div><p>Close the first paying client from the outreach machine and it lands here.</p></div>
+    <div class="clientcard"><h3>Beyond Birr</h3><div class="meta">Youth program · Active · FIRST PAYING CLIENT ($50 site)</div><p>4-page site + film hero + FAQ chatbot, live at beyond-birr.vercel.app (beyondbirr.ca pending her DNS change). Won 2026-07-29. Next: domain cutover, testimonial after Aug 25 market day, referrals into the Ethiopian/Eritrean community network.</p></div>
+    <div class="clientcard" style="border-left-color:var(--muted)"><h3>+ New client</h3><div class="meta">Pipeline</div><p>Close the next paying client from the outreach machine and it lands here.</p></div>
   </section>
 
   <!-- EMPLOYEES -->
@@ -675,6 +773,73 @@
       <button class="add" onclick="openEditor('Employees',null)"><span class="plus">+</span> Add employee</button>
     </div>
     <div id="emp-list"><div class="emp-empty">Loading…</div></div>
+  </section>
+
+  <!-- MARKETING -->
+  <section class="page" id="p-marketing">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Marketing</h2><div class="hint">Five numbers, this week's posts, and the assets still sitting on the shelf. Production was never the bottleneck. Publishing is.</div></div></div>
+      <button class="ghost" onclick="loadPosts(true)">Refresh</button>
+    </div>
+
+    <div class="sb" id="mk-scoreboard"></div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>This week</h3>
+        <div class="hint">Three posts a week. Batch them Sunday.</div>
+        <div id="mk-week"></div>
+      </div>
+      <div class="card">
+        <h3>Ready to publish</h3>
+        <div class="hint">Already built, never posted. Marking one logs it and moves the counter.</div>
+        <div id="mk-backlog"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Published</h3>
+      <div class="hint">The only row that counts. Everything else is a plan.</div>
+      <div id="mk-posted"></div>
+    </div>
+  </section>
+
+  <!-- OFFERS -->
+  <section class="page" id="p-offers">
+    <div class="modhead">
+      <div class="htitle"><div class="tick"></div><div><h2>Offers</h2><div class="hint">Open this on a call. Every offer is one-time setup plus monthly, because the build is where the work is.</div></div></div>
+      <button class="ghost" onclick="toggleFounding()" id="founding-btn">Founding rate: on</button>
+    </div>
+
+    <div class="offers" id="offer-cards"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h3>Quote builder</h3>
+      <div class="hint">Never say a number before they say a number. Ask what a job is worth and how many they miss, then this checks whether your price is defensible.</div>
+      <div class="qb">
+        <div>
+          <label>Offer</label>
+          <select id="q-offer" onchange="renderQuote()"></select>
+          <label>Rate</label>
+          <select id="q-rate" onchange="renderQuote()">
+            <option value="founding">Founding Five (clients 1-5)</option>
+            <option value="early">Early (clients 6-10)</option>
+            <option value="standard">Standard (clients 11+)</option>
+          </select>
+          <label>What is one job worth to them?</label>
+          <input id="q-job" type="number" value="400" min="0" oninput="renderQuote()">
+          <label>How many do they miss a week?</label>
+          <input id="q-miss" type="number" value="5" min="0" oninput="renderQuote()">
+        </div>
+        <div class="qbout" id="q-out"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Promotions</h3>
+      <div class="hint">Every deadline here is real. A deadline that quietly passes makes every future one worthless.</div>
+      <div id="promo-list"></div>
+    </div>
   </section>
 </div>
 
@@ -800,7 +965,7 @@ function stageOf(st){st=String(st||'').toLowerCase();
 function demoLink(biz,city,owner,niche){return DEMO+'?biz='+encodeURIComponent(biz||'')+'&city='+encodeURIComponent(city||'Calgary')+'&owner='+encodeURIComponent(owner||'there')+(niche?'&type='+encodeURIComponent(niche):'');}
 function animateNum(el,to,suffix){if(!el)return;to=parseInt(to,10)||0;var t0=null;function step(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/650,1);var v=Math.round((0.5-Math.cos(p*Math.PI)/2)*to);el.textContent=v+(suffix||'');if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
 
-function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();if(name==='call')callOpen();if(name==='money')renderMoney();if(name==='employees')renderEmployees();window.scrollTo({top:0,behavior:'smooth'});}
+function tab(name){document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.t===name);});document.querySelectorAll('section.page').forEach(function(s){s.classList.toggle('on',s.id==='p-'+name);});if(name==='calendar')renderCal();if(name==='coach')coachOpen();if(name==='insights')renderInsights();if(name==='call')callOpen();if(name==='money')renderMoney();if(name==='employees')renderEmployees();if(name==='marketing')renderMarketing();if(name==='offers')renderOffers();window.scrollTo({top:0,behavior:'smooth'});}
 document.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&b.dataset.t){tab(b.dataset.t);closeSide();}});
 function toggleSidebar(){var ex=!document.body.classList.contains('side-expanded');document.body.classList.toggle('side-expanded',ex);var t=document.getElementById('side-toggle');if(t)t.innerHTML=ex?'‹':'›';try{localStorage.setItem('ambrosia_side',ex?'1':'0');}catch(e){}}
 function openSide(){document.body.classList.add('side-open');}
@@ -1320,13 +1485,264 @@ async function empFillLeads(id){
 
 /* ---------- load ---------- */
 function headcount(){document.getElementById('upd').textContent=live(LEADS).length+' leads · '+live(DEALS).length+' deals · '+live(TASKS).length+' tasks · '+live(EVENTS).length+' events';}
+/* ================= MARKETING + OFFERS (added 2026-08-04) =================
+   Data sources: AIOS/marketing/{README,offers,promotions,content-engine,distribution}.md
+   Anything priced here matches those docs. If you change one, change the other. */
+
+var POSTS=[];var POSTS_TAB_OK=true;var FOUNDING=true;
+
+/* The finished assets that have never been published. Source: distribution.md */
+var BACKLOG=[
+ {id:'tiktok-01',t:'First TikTok video',s:'AIOS/video/ambrosia-tiktok-01-ambient.mp4',p:'TikTok + IG Reel',pillar:'leak'},
+ {id:'ig-carousel',t:'8-slide carousel, The 3-Filter Test',s:'AIOS/ig-carousel/slide-1..8.png',p:'Instagram',pillar:'secret'},
+ {id:'ad-30s',t:'30 second service ad, cut v2',s:'AIOS/video/ambrosia-ad-30s-v2.mp4',p:'TikTok + IG Reel',pillar:'leak'},
+ {id:'intro-90s',t:'90 second intro film',s:'AIOS/video/ambrosia-intro-90s-v3.mp4',p:'YouTube + LinkedIn',pillar:'proof'},
+ {id:'flier',t:'Services flier',s:'AIOS/services-flier.png',p:'Instagram + print',pillar:'secret'},
+ {id:'poster',t:'Referral poster',s:'AIOS/referral-poster.png',p:'Physical handout',pillar:'proof'},
+ {id:'clips-4',t:'Four themed clips',s:'AIOS/video/clips/ambrosia-1..4.mp4',p:'Reels',pillar:'leak'},
+ {id:'adfactory-8',t:'Eight ad-factory creatives',s:'AIOS/marketing/ad-factory/out/',p:'Instagram + TikTok',pillar:'leak'}
+];
+
+/* Dated calendar. Source: content-engine.md */
+var CALENDAR=[
+ {d:'2026-08-04',pillar:'leak',t:'First TikTok video',w:'TikTok + IG Reel'},
+ {d:'2026-08-06',pillar:'secret',t:'The 3-Filter Test carousel',w:'Instagram'},
+ {d:'2026-08-08',pillar:'leak',t:'30 second service ad',w:'TikTok + IG Reel'},
+ {d:'2026-08-11',pillar:'leak',t:'After-Hours Test ep 1: plumbers',w:'TikTok'},
+ {d:'2026-08-13',pillar:'proof',t:'The Beyond Birr build',w:'LinkedIn + IG'},
+ {d:'2026-08-15',pillar:'founder',t:'Seventeen and running an AI company',w:'TikTok'},
+ {d:'2026-08-18',pillar:'leak',t:'Broken since 2016 (blur the name)',w:'TikTok'},
+ {d:'2026-08-20',pillar:'proof',t:'Real voice agent call recording',w:'IG + LinkedIn'},
+ {d:'2026-08-22',pillar:'leak',t:'After-Hours Test ep 2: HVAC',w:'TikTok'},
+ {d:'2026-08-25',pillar:'leak',t:'Cost of a missed call, counting up',w:'TikTok + IG'},
+ {d:'2026-08-27',pillar:'proof',t:'Beyond Birr case study (the big one)',w:'Everywhere'},
+ {d:'2026-08-29',pillar:'secret',t:'Give away the whole Leak Audit',w:'LinkedIn + IG'},
+ {d:'2026-09-01',pillar:'founder',t:'Back to Business promo launch',w:'TikTok'},
+ {d:'2026-09-03',pillar:'proof',t:'The Free Fix, filmed',w:'Everywhere'}
+];
+
+/* Offer ladder. Source: offers.md. `tiers` present only where promotions.md
+   actually defines a founding ladder, so no discount is invented here. */
+var OFFERS=[
+ {id:'site',n:'The Site',leak:'They find you, open it on a phone, and leave.',setup:1500,mo:99},
+ {id:'phone',n:'The Phone',leak:'They call while you are on a job. Voicemail.',setup:750,mo:300},
+ {id:'follow',n:'The Follow-up',leak:'They ask for a quote. Nobody chases.',setup:500,mo:300},
+ {id:'system',n:'Recovery System',leak:'All three leaks, one system. Steer here.',setup:2500,mo:600,flag:1,
+  tiers:{founding:{setup:1500,mo:400},early:{setup:2000,mo:500},standard:{setup:2500,mo:600}}},
+ {id:'partner',n:'Recovery Partner',leak:'Multi-location or $1M+. Includes ongoing build.',setup:5000,mo:1500}
+];
+
+var PROMOS=[
+ {w:'Aug 4 to 31',t:'Founding Five launch',d:'Recovery System at $1,500 setup and $400 a month. Five spots, and five is genuinely all you can build at once.',s:'2026-08-04',e:'2026-08-31'},
+ {w:'Aug 25 to Sep 5',t:'The Beyond Birr moment',d:'Not a discount, a harvest. Market day Aug 25, program ends Aug 27. Ask Kalkidan for the testimonial, the referral, and case-study permission together.',s:'2026-08-25',e:'2026-09-05'},
+ {w:'Sep 1 to 30',t:'Back to Business',d:'Free Leak Audit, five a week, plus the Free Fix for any broken certificate or form it turns up.',s:'2026-09-01',e:'2026-09-30'},
+ {w:'Nov 1 to 30',t:'Live by January',d:'Book in November, live before January 1, first month of the retainer free. The build lead time is the real reason.',s:'2026-11-01',e:'2026-11-30'},
+ {w:'Dec 1 to 15',t:'Founding Five closes',d:'Last founding spots before the rate steps to $2,000 and $500. If five sold earlier, this becomes the announcement instead.',s:'2026-12-01',e:'2026-12-15'}
+];
+
+function money(n){return '$'+Math.round(n).toLocaleString();}
+function offerById(id){for(var i=0;i<OFFERS.length;i++){if(OFFERS[i].id===id)return OFFERS[i];}return OFFERS[0];}
+function rateOf(o,tier){ return (o.tiers&&o.tiers[tier])?o.tiers[tier]:{setup:o.setup,mo:o.mo}; }
+
+/* getTab() collapses "tab missing" and "tab empty" both to [], because it falls
+   back to (d.data||[]) on any shape it does not recognise. That distinction
+   matters here: without it the Mark-posted buttons render over a tab that does
+   not exist and every click fails. So Posts gets its own stricter reader. */
+async function getPostsTab(){
+  try{
+    var r=await fetch(API+'/ops-data?tab=Posts');
+    if(!r.ok)return null;
+    var d=await r.json();
+    if(Array.isArray(d))return d;
+    if(d&&Array.isArray(d.data))return d.data;
+    return null;
+  }catch(e){return null;}
+}
+
+async function loadPosts(force){
+  var p=await getPostsTab();
+  POSTS_TAB_OK=(p!==null);POSTS=p||[];
+  if(force)toast(POSTS_TAB_OK?'Marketing refreshed':'Posts tab not found',!POSTS_TAB_OK);
+  renderMarketing();
+}
+
+function postedIds(){var s={};live(POSTS).forEach(function(p){if(p.asset_id)s[p.asset_id]=p;});return s;}
+
+function renderMarketing(){renderScoreboard();renderWeek();renderBacklog();renderPosted();}
+
+function renderScoreboard(){
+  var el=document.getElementById('mk-scoreboard');if(!el)return;
+  var L=live(LEADS),D=live(DEALS);
+  var engaged=L.filter(function(l){return ['replied','interested','booked','won'].indexOf(String(l.status||'').toLowerCase())>=0;}).length;
+  var props=D.filter(function(d){return String(d.stage||'').toLowerCase()==='proposal';}).length;
+  var won=D.filter(function(d){return String(d.stage||'').toLowerCase()==='won';});
+  var mrr=won.reduce(function(a,d){return a+(parseFloat(d.value)||0);},0);
+  var testi=won.filter(function(d){return ['yes','collected','done'].indexOf(String(d.testimonial||'').toLowerCase())>=0;}).length;
+  var published=live(POSTS).length;
+  var refs=L.filter(function(l){return String(l.source||'').toLowerCase().indexOf('referral')>=0||String(l.referred_by||'').trim();}).length;
+  var tiles=[
+    {n:published,l:'Posts published',sub:published?'Keep the cadence':'Nothing has shipped yet',zero:!published},
+    {n:engaged,l:'Engaged leads',sub:'Replied, booked, or won',zero:!engaged},
+    {n:props,l:'Proposals out',sub:'Where deals live or die',zero:!props},
+    {n:money(mrr)+'/mo',l:'MRR',sub:'Target is $10,000',zero:!mrr},
+    {n:testi+' of '+(won.length||3),l:'Testimonials',sub:testi?'Use them everywhere':'The most expensive gap',zero:!testi}
+  ];
+  el.innerHTML=tiles.map(function(t,i){
+    return '<div class="tile" style="animation-delay:'+(i*45)+'ms"><div class="n '+(t.zero?'zero':'good')+'">'+esc(String(t.n))+'</div>'+
+      '<div class="l">'+esc(t.l)+'</div><div class="sub">'+esc(t.sub)+'</div></div>';
+  }).join('');
+  var rl=document.getElementById('mk-refs');if(rl)rl.textContent=refs;
+}
+
+function renderWeek(){
+  var el=document.getElementById('mk-week');if(!el)return;
+  var td=today();
+  var upcoming=CALENDAR.filter(function(c){return c.d>=td;}).slice(0,4);
+  var recent=CALENDAR.filter(function(c){return c.d<td;}).slice(-2);
+  var rows=recent.concat(upcoming);
+  if(!rows.length){el.innerHTML='<div class="empty">Calendar has run out. Extend it in content-engine.md.</div>';return;}
+  el.innerHTML=rows.map(function(c){
+    var dd=new Date(c.d+'T00:00:00');
+    var lbl=dd.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'});
+    var past=c.d<td;
+    return '<div class="qrow" style="'+(past?'opacity:.45':'')+'"><div class="when">'+esc(lbl)+'</div>'+
+      '<div class="what"><b>'+esc(c.t)+'</b><span>'+esc(c.w)+'</span></div>'+
+      '<div class="pill '+esc(c.pillar)+'">'+esc(c.pillar)+'</div></div>';
+  }).join('');
+}
+
+function renderBacklog(){
+  var el=document.getElementById('mk-backlog');if(!el)return;
+  if(!POSTS_TAB_OK){
+    el.innerHTML='<div class="empty">No <b>Posts</b> tab in the CRM sheet yet.<br><br>'+
+      'Add a tab named <b>Posts</b> with headers:<br>'+
+      '<code style="color:var(--gold)">id · date · platform · asset · asset_id · pillar · url · deleted</code><br><br>'+
+      'No workflow change needed, /ops-data and /ops-save are already generic over tab.</div>';
+    return;
+  }
+  var done=postedIds();
+  el.innerHTML=BACKLOG.map(function(b){
+    var p=done[b.id];
+    return '<div class="qrow"><div class="what"><b>'+esc(b.t)+'</b><span>'+esc(b.s)+'</span></div>'+
+      (p?'<div class="pill done">posted</div>'
+        :'<div class="pill '+esc(b.pillar)+'">'+esc(b.pillar)+'</div>'+
+         '<button class="mini" onclick="markPosted(\''+b.id+'\')">Mark posted</button>')+
+      '</div>';
+  }).join('');
+}
+
+function renderPosted(){
+  var el=document.getElementById('mk-posted');if(!el)return;
+  var L=live(POSTS);
+  if(!L.length){
+    el.innerHTML='<div class="empty">Nothing published yet. Seven finished assets are sitting in the list above, '+
+      'and every one of them has never been in front of anyone who is not you.</div>';
+    return;
+  }
+  el.innerHTML=L.slice().reverse().map(function(p){
+    return '<div class="qrow"><div class="when">'+esc(String(p.date||'').slice(0,10))+'</div>'+
+      '<div class="what"><b>'+esc(p.asset||'(post)')+'</b><span>'+esc(p.platform||'')+(p.url?' · '+esc(p.url):'')+'</span></div>'+
+      (p.pillar?'<div class="pill '+esc(p.pillar)+'">'+esc(p.pillar)+'</div>':'')+'</div>';
+  }).join('');
+}
+
+async function markPosted(id){
+  var b=null;BACKLOG.forEach(function(x){if(x.id===id)b=x;});
+  if(!b)return;
+  var row={id:'post_'+id,date:today(),platform:b.p,asset:b.t,asset_id:b.id,pillar:b.pillar,url:'',deleted:''};
+  try{
+    var res=await save('Posts',row);
+    if(res&&res.error){toast('Save rejected: '+res.error,true);return;}
+    POSTS.push(row);renderMarketing();
+    toast('Logged as published');
+  }catch(e){toast('Could not save. Does the Posts tab exist?',true);}
+}
+
+function toggleFounding(){
+  FOUNDING=!FOUNDING;
+  var b=document.getElementById('founding-btn');
+  if(b)b.textContent='Founding rate: '+(FOUNDING?'on':'off');
+  renderOfferCards();
+}
+
+function renderOfferCards(){
+  var el=document.getElementById('offer-cards');if(!el)return;
+  var tier=FOUNDING?'founding':'standard';
+  el.innerHTML=OFFERS.map(function(o){
+    var r=rateOf(o,tier);
+    var yr=r.setup+r.mo*12;
+    var discounted=(o.tiers&&FOUNDING);
+    return '<div class="offer'+(o.flag?' flag':'')+'">'+(o.flag?'<div class="tag">Steer here</div>':'')+
+      '<h4>'+esc(o.n)+'</h4><div class="leakline">'+esc(o.leak)+'</div>'+
+      '<div class="price">'+money(r.mo)+'<small> /mo</small></div>'+
+      '<div class="setup">plus '+money(r.setup)+' setup'+(discounted?' · founding rate':'')+'</div>'+
+      '<div class="yr">Year one '+money(yr)+'</div></div>';
+  }).join('');
+}
+
+function renderQuote(){
+  var out=document.getElementById('q-out');if(!out)return;
+  var o=offerById(gv('q-offer')||'system');
+  var tier=gv('q-rate')||'founding';
+  var r=rateOf(o,tier);
+  var job=parseFloat(gv('q-job'))||0;
+  var miss=parseFloat(gv('q-miss'))||0;
+  var yr=r.setup+r.mo*12;
+  /* Misses are PER WEEK, which is how leak-audit.md asks the question, so the
+     annual figure is x52. Then halved, because assuming the system recovers
+     everything they currently lose is the kind of number that loses the room. */
+  var annual=job*miss*52*0.5;
+  var pct=annual>0?(yr/annual*100):null;
+  var h='';
+  h+='<div class="qbline"><span>Setup, one time</span><b>'+money(r.setup)+'</b></div>';
+  h+='<div class="qbline"><span>Monthly</span><b>'+money(r.mo)+'</b></div>';
+  h+='<div class="qbline"><span>Year one total</span><b>'+money(yr)+'</b></div>';
+  h+='<div class="qbline"><span>What it recovers for them</span><b>'+(annual?money(annual):'?')+'</b></div>';
+  if(annual)h+='<div class="qbnote">Assumes it wins back half of what they lose now ('+money(job*miss*52)+' a year). Use their numbers, never yours.</div>';
+  if(!o.tiers&&tier!=='standard'){
+    h+='<div class="qbnote">'+esc(o.n)+' has one price. The founding ladder is defined for the Recovery System only, so no discount is applied here.</div>';
+  }
+  if(pct===null){
+    h+='<div class="qbnote">Ask what one job is worth and how many they miss. Until they say a number, you cannot price this and you should not try.</div>';
+  }else{
+    var v=Math.round(pct);
+    var cls='ok',msg='';
+    if(pct<10){cls='warn';msg='You are at '+v+'% of what this recovers for them. That is underpriced. Their value is the ceiling, not your cost.';}
+    else if(pct<=25){cls='ok';msg='You are at '+v+'% of first-year value. Defensible, and year two drops to the monthly alone.';}
+    else{cls='warn';msg='You are at '+v+'% of first-year value. Hard to defend. Reduce scope rather than discounting, or their numbers are too small for this offer.';}
+    h+='<div class="qbnote '+cls+'">'+esc(msg)+'</div>';
+  }
+  h+='<div class="qbnote">Milestones under 30 days apart: 50% at kickoff, 50% at live and verified. Their API and phone costs go on their card, and maintenance is not new functionality.</div>';
+  out.innerHTML=h;
+}
+
+function renderPromos(){
+  var el=document.getElementById('promo-list');if(!el)return;
+  var td=today();
+  el.innerHTML=PROMOS.map(function(p){
+    var active=(td>=p.s&&td<=p.e);
+    return '<div class="promo"><div class="win">'+esc(p.w)+'</div><div><b>'+esc(p.t)+
+      (active?'<span class="now">Live now</span>':'')+'</b><p>'+esc(p.d)+'</p></div></div>';
+  }).join('');
+}
+
+function renderOffers(){
+  var sel=document.getElementById('q-offer');
+  if(sel&&!sel.options.length){
+    sel.innerHTML=OFFERS.map(function(o){return '<option value="'+o.id+'"'+(o.flag?' selected':'')+'>'+esc(o.n)+'</option>';}).join('');
+  }
+  renderOfferCards();renderQuote();renderPromos();
+}
+
 async function loadAll(){
   var ms=document.getElementById('me-switch');if(ms)ms.value=ME;
   var leads=await getTab('Leads');
   if(leads===null){document.getElementById('banner').style.display='block';document.getElementById('upd').textContent='CRM not connected';document.getElementById('rows').innerHTML='<tr><td colspan="7" style="color:#DF5583">Attach the Google Sheets credential and re-toggle the workflow.</td></tr>';return;}
   LEADS=leads;refreshFilters();renderLeads();
   DEALS=(await getTab('Deals'))||[];TASKS=(await getTab('Tasks'))||[];NOTES=(await getTab('Notes'))||[];EVENTS=(await getTab('Events'))||[];EMPLOYEES=(await getTab('Employees'))||[];
+  var posts=await getPostsTab();POSTS_TAB_OK=(posts!==null);POSTS=posts||[];
   overview();renderDeals();renderTasks();renderNotes();renderCal();renderInsights();renderMoney();headcount();
+  renderMarketing();renderOffers();
 }
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 loadAll();
