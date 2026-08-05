@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ambrosia — Call Card</title>
+<meta name="theme-color" content="#080807">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Call Card">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080807;--surface:#131312;--surface2:#0E0E0D;--surface3:#1A1A18;
+    --gold:#C9A84C;--gold-light:#E8D5A3;--gold-deep:#8A6E28;--text:#F5F5F0;--muted:#8A8A82;
+    --border:#201F1C;--border2:#2C2B27;--green:#2FA79E;--red:#DF5583;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1000px 460px at 50% -240px,rgba(201,168,76,.10),transparent 70%);background-attachment:fixed;
+    max-width:640px;margin:0 auto;padding:22px 16px 70px;-webkit-text-size-adjust:100%}
+  ::selection{background:var(--gold);color:#080807}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+  .logo{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;color:var(--gold);letter-spacing:.02em}
+  .refresh{background:none;border:1px solid var(--border2);color:var(--muted);font-size:11px;padding:7px 11px;cursor:pointer;font-family:'Inter'}
+  .refresh:active{color:var(--gold);border-color:var(--gold)}
+  h1{font-family:'Playfair Display',serif;font-weight:700;font-size:26px;letter-spacing:-.4px;margin-top:2px}
+  .status{color:var(--muted);font-size:12.5px;margin:2px 0 18px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;vertical-align:middle}
+  .rule{background:linear-gradient(150deg,var(--surface3),var(--surface));border:1px solid var(--border2);border-left:3px solid var(--gold);padding:15px 16px;margin-bottom:14px}
+  h2{font-family:'Playfair Display',serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:26px 0 10px;font-weight:600}
+  .card{background:var(--surface);border:1px solid var(--border);padding:16px;margin-bottom:11px}
+  .say{font-size:16px;line-height:1.55}
+  .label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 6px}
+  .pick{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+  ul{margin:4px 0 0;padding-left:19px}
+  li{margin:7px 0}
+  .big{font-weight:700;color:var(--gold-light);font-family:'JetBrains Mono',monospace}
+  .green{color:var(--gold-light)}
+  /* counters */
+  .counters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+  .ctr{background:var(--surface2);border:1px solid var(--border);border-top:2px solid var(--gold);padding:14px 15px;text-align:center}
+  .ctr .n{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .ctr .n small{font-size:14px;color:var(--muted);font-family:'Inter'}
+  .ctr .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .logrow{display:flex;gap:9px;margin:10px 0 4px}
+  .logbtn{flex:1;background:var(--surface3);border:1px solid var(--border2);color:var(--text);font-family:'Inter';font-size:14px;font-weight:600;padding:14px;cursor:pointer;transition:border-color .15s,color .15s}
+  .logbtn:active{transform:translateY(1px)}
+  .logbtn.gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807}
+  .directive{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);padding:14px 15px;margin-bottom:16px;white-space:pre-wrap;font-size:14.5px}
+  /* call list */
+  .call-item{background:var(--surface);border:1px solid var(--border);padding:13px 14px;margin-bottom:9px;transition:opacity .25s,border-color .25s}
+  .call-item.logged{opacity:.62;border-color:var(--border2)}
+  .call-item .biz{font-weight:600;font-size:15px}
+  .call-item .ph{color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:1px}
+  .call-btns{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+  .cbtn{flex:1;min-width:84px;text-align:center;text-decoration:none;font-size:13px;font-weight:600;padding:11px 8px;cursor:pointer;border:1px solid var(--border2);color:var(--text);background:var(--surface3);font-family:'Inter'}
+  .cbtn.call{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807}
+  .cbtn.book{border-color:var(--gold-deep);color:var(--gold-light)}
+  /* outcome picker */
+  .oc-label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin:13px 0 7px}
+  .oc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .oc{text-align:center;font-size:13px;font-weight:600;padding:11px 6px;cursor:pointer;border:1px solid var(--border2);color:var(--muted);background:var(--surface2);font-family:'Inter';transition:border-color .15s,color .15s,background .15s}
+  .oc:active{transform:translateY(1px)}
+  .oc.on{color:#080807;border-color:transparent}
+  .oc.on.interested{background:linear-gradient(135deg,#7BD6CE,var(--green))}
+  .oc.on.booked{background:linear-gradient(135deg,var(--gold-light),var(--gold))}
+  .oc.on.not_interested{background:linear-gradient(135deg,#EE93B4,var(--red))}
+  .oc.on.no_answer{background:linear-gradient(135deg,#B9B9AE,#7E7E74)}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;margin-top:7px;letter-spacing:.03em}
+  .pill.interested{background:rgba(47,167,158,.16);color:#7BD6CE;border:1px solid rgba(47,167,158,.4)}
+  .pill.booked{background:rgba(201,168,76,.16);color:var(--gold-light);border:1px solid var(--gold-deep)}
+  .pill.not_interested{background:rgba(223,85,131,.14);color:#EE93B4;border:1px solid rgba(223,85,131,.38)}
+  .pill.no_answer{background:rgba(138,138,130,.14);color:#B9B9AE;border:1px solid var(--border2)}
+  .undo{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:8px 0 0;font-family:'Inter'}
+  .prog{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);padding:10px 13px;margin-bottom:11px;font-size:13px;color:var(--gold-light)}
+  details{background:var(--surface);border:1px solid var(--border);padding:0 14px;margin-bottom:8px}
+  details[open]{background:var(--surface3)}
+  summary{cursor:pointer;padding:13px 0;font-weight:600;list-style:none;outline:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"›";color:var(--gold);font-weight:700;margin-right:10px;display:inline-block}
+  details[open] summary::before{content:"⌄"}
+  details p{margin:0 0 14px;color:var(--text)}
+  .dont li{color:#e39a8f}
+  .demo-btn{display:block;width:100%;text-align:center;background:none;border:1px solid var(--gold-deep);color:var(--gold-light);font-family:'Inter';font-size:14px;font-weight:600;padding:13px;cursor:pointer;text-decoration:none}
+  footer{color:var(--muted);font-size:12px;margin-top:32px;text-align:center;line-height:1.8}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--gold-deep);color:var(--gold-light);padding:11px 18px;font-size:13px;transition:transform .25s;z-index:50;max-width:90%}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+  .toast.err{border-color:var(--red);color:#EE93B4}
+  .load{text-align:center;color:var(--muted);padding:60px 0;font-size:14px}
+  /* coach */
+  .tc{background:var(--surface);border:1px solid var(--border);padding:14px}
+  .tc-thread{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+  .tc-hint{color:var(--muted);font-size:13px;padding:10px 2px;line-height:1.5}
+  .tc-msg{padding:10px 13px;font-size:14px;line-height:1.5;max-width:88%;white-space:pre-wrap;word-wrap:break-word}
+  .tc-me{align-self:flex-end;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#080807;border-radius:13px 13px 3px 13px}
+  .tc-ai{align-self:flex-start;background:var(--surface3);border:1px solid var(--border2);border-radius:13px 13px 13px 3px}
+  .tc-typing{color:var(--muted)}
+  .tc-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+  .tc-chips button{background:var(--surface2);border:1px solid var(--border2);color:var(--gold-light);font-size:12px;padding:8px 11px;cursor:pointer;font-family:'Inter'}
+  .tc-input-row{display:flex;gap:8px}
+  .tc-input-row input{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:13px;font-family:'Inter';font-size:15px}
+  .tc-send{background:linear-gradient(135deg,var(--gold-light),var(--gold));border:0;color:#080807;font-weight:600;padding:13px 17px;cursor:pointer;font-family:'Inter'}
+  .tc-foot{margin-top:8px;text-align:right}
+  .tc-new{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
+  /* leaderboard + crown + callback */
+  .crown{background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.04));border:1px solid var(--gold-deep);color:var(--gold-light);padding:11px 14px;margin-bottom:16px;font-size:13.5px;font-weight:600}
+  .lb .lb-prize{font-size:12.5px;color:var(--gold-light);background:var(--surface2);border:1px solid var(--border2);padding:9px 11px;margin-bottom:11px}
+  .lb-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border)}
+  .lb-row:last-child{border-bottom:none}
+  .lb-row.me{background:rgba(201,168,76,.06)}
+  .lb-rank{width:26px;text-align:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--muted);flex:0 0 auto}
+  .lb-name{flex:1;font-weight:600;font-size:14px}
+  .lb-tr{color:var(--gold-light);font-size:12px}
+  .lb-stat{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+  .lb-you{margin-top:11px;font-size:13px;color:var(--gold-light)}
+  .cbtip{margin-top:9px;font-size:13px;line-height:1.5;color:var(--gold-light);background:var(--surface2);border-left:2px solid var(--gold-deep);padding:9px 11px}
+</style>
+</head>
+<body>
+<div id="app"><div class="load">Loading your card…</div></div>
+<div class="toast" id="toast"></div>
+<script>
+var API='https://n8n.ambrosia-ai.org/webhook';
+var EMP=null;
+var TCOACH=[];
+var CHIPS=['Give me a strong opener','They said not interested, what do I say','I am getting nervous to call','Pump me up'];
+var ALLEMP=[];
+var CLOG={};          /* CallLog rows keyed by id */
+var CLOG_OK=false;    /* did the CallLog tab load cleanly */
+var CYCLE0='2026-07-07';var CYCLE_DAYS=14;
+var OUTCOMES=[
+ {k:'interested',    t:'Interested'},
+ {k:'booked',        t:'Booked demo'},
+ {k:'no_answer',     t:'No answer'},
+ {k:'not_interested',t:'Not interested'}
+];
+var OCLABEL={interested:'Interested',booked:'Booked demo',no_answer:'No answer',not_interested:'Not interested'};
+var TIPS=[
+ 'No answer? That IS the pitch. If you cannot reach the owner, neither can his customers. That call just went to a competitor. A voice agent answers every one.',
+ 'Straight to voicemail. 8 of 10 callers hang up and dial the next guy. That is money walking out the door, and the exact thing you fix on the callback.',
+ 'Too busy to answer you means too busy to answer customers. Say that on the callback. An AI receptionist catches every call while the crew works.',
+ 'Check their website before you call back. Outdated, or no way to book online? That is your in. A clean site plus booking wins them jobs.',
+ 'Owner doing invoices, follow-ups, scheduling by hand? One automation frees him up. Lead with that, not the tech.',
+ 'A no-pickup is a not-yet, not a no. Note the time, try a different window, and open honest: you tried them earlier today.',
+ 'They ignored a call from a number they know. Their customers do the same to them. That lost job is the whole reason your demo matters.',
+ 'Slow to answer usually means slow everywhere: quotes, callbacks, booking. Point to one leak and offer to plug it for free first.'
+];
+function qp(k){try{return new URLSearchParams(location.search).get(k);}catch(e){return null;}}
+function slug(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+/* who this card is for: ?e=id wins, else the URL tells us — /andrew AND /andrew.html both mean Andrew */
+function pathSeg(){try{
+  var parts=location.pathname.split('/').filter(Boolean);
+  var last=parts.length?decodeURIComponent(parts[parts.length-1]):'';
+  last=last.replace(/\.(html?|php)$/i,'');
+  if(!last||last==='ambrosia-os'||last==='ambrosia-call'||last==='index'||last==='404')return '';
+  return last;
+}catch(e){return '';}}
+var EID=qp('e')||pathSeg()||'basil';
+function isEmp(x,k){if(!x)return false;var id=String(x.id||'');var ks=slug(k);return id===k||id==='emp_'+ks||slug(x.name)===ks||slug(id.replace(/^emp_|^employees_/,''))===ks||slug(id)===ks;}
+/* local calendar date in Mountain Time (NOT UTC — UTC rolls over at 6pm local and wipes the day) */
+function td(){try{return new Date().toLocaleDateString('en-CA',{timeZone:'America/Edmonton'});}catch(e){return new Date().toISOString().slice(0,10);}}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(m,err){var t=document.getElementById('toast');t.textContent=m;t.className='toast on'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(function(){t.className='toast';},2600);}
+function fresh(){return String(EMP.last_active||'').slice(0,10)===td();}
+function dials(){return fresh()?(parseInt(EMP.dials_today,10)||0):0;}
+function demos(){return fresh()?(parseInt(EMP.demos_today,10)||0):0;}
+function lines(){return String(EMP.call_list||'').split(/\n/).map(function(x){return x.trim();}).filter(Boolean);}
+function parseLine(s){var i=s.lastIndexOf(',');if(i<0){var m=s.match(/[0-9][0-9\-\s().+]{6,}/);if(m)return{name:s.replace(m[0],'').trim()||'Lead',phone:m[0].trim()};return{name:s,phone:''};}return{name:s.slice(0,i).trim(),phone:s.slice(i+1).trim()};}
+function demoFor(biz){var u=String((EMP&&EMP.demo_url)||'').trim();if(!u)return '';if(/plumbing-demo|\/demo/i.test(u)){return u+(u.indexOf('?')>=0?'&':'?')+'biz='+encodeURIComponent(biz||'your shop')+'&city='+encodeURIComponent((EMP&&EMP.city)||'')+'&owner=there&type='+encodeURIComponent((EMP&&EMP.niche)||'');}return u;}
+function demoSms(phone,biz){var link=demoFor(biz);var msg='Hey, here is that quick 30 second demo of it answering '+(biz||'your')+' phone, give it a listen: '+link;return 'sms:'+phone+'?&body='+encodeURIComponent(msg);}
+/* cycle + leaderboard helpers */
+function dnum(ds){var p=String(ds||'').slice(0,10).split('-');if(p.length<3)return 0;return Date.UTC(+p[0],+p[1]-1,+p[2])/86400000;}
+function dstr(n){return new Date(n*86400000).toISOString().slice(0,10);}
+function cycleStart(ds){var t=dnum(ds||td());var b=dnum(CYCLE0);if(t<b)return CYCLE0;return dstr(b+Math.floor((t-b)/CYCLE_DAYS)*CYCLE_DAYS);}
+function cycStats(e){var cs=cycleStart(td());if(String((e&&e.cycle_start)||'').slice(0,10)!==cs)return {d:0,m:0};return {d:parseInt(e.cycle_dials,10)||0,m:parseInt(e.cycle_demos,10)||0};}
+function callers(){return (ALLEMP||[]).filter(function(x){return x&&x.name&&String(x.deleted||'').toLowerCase()!=='yes';});}
+function ranked(){return callers().map(function(e){var st=cycStats(e);return {e:e,d:st.d,m:st.m,tr:parseInt(e.trophies,10)||0};}).sort(function(a,b){return (b.m-a.m)||(b.d-a.d)||String(a.e.name).localeCompare(String(b.e.name));});}
+function cfgReward(){var c=(ALLEMP||[]).filter(function(x){return x&&String(x.id)==='_config';})[0];return c?String(c.cycle_reward||''):'';}
+function amILeading(){var rk=ranked();return rk.length&&EMP&&String(rk[0].e.id)===String(EMP.id)&&(rk[0].m>0||rk[0].d>0);}
+function ensureCycle(){var cs=cycleStart(td());if(String(EMP.cycle_start||'').slice(0,10)!==cs){EMP.cycle_start=cs;EMP.cycle_dials=0;EMP.cycle_demos=0;}}
+function tipFor(name){var h=0,s=String(name||'x');for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}return TIPS[h%TIPS.length];}
+
+/* ---------- per-lead call log (shared, lives in the CallLog sheet tab) ---------- */
+function empKey(){return slug(EMP&&EMP.name?EMP.name:EID);}
+function leadId(biz){return 'cl_'+empKey()+'_'+slug(biz);}
+function logOf(biz){var r=CLOG[leadId(biz)];return (r&&String(r.deleted||'').toLowerCase()!=='yes')?r:null;}
+async function loadLog(){
+  try{
+    var r=await fetch(API+'/ops-data?tab=CallLog&cb='+Date.now());
+    var d=await r.json();var rows=Array.isArray(d)?d:(d.data||[]);
+    CLOG={};
+    for(var i=0;i<rows.length;i++){var x=rows[i];if(x&&x.id)CLOG[String(x.id)]=x;}
+    CLOG_OK=true;
+  }catch(e){CLOG={};CLOG_OK=false;}
+}
+async function pushLog(rec){
+  try{
+    var r=await fetch(API+'/ops-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tab:'CallLog',row:rec})});
+    var d=await r.json();
+    if(!d||!d.ok)throw new Error('bad');
+    return true;
+  }catch(e){return false;}
+}
+async function setOutcome(idx,kind){
+  var p=parseLine(lines()[idx]||'');
+  var id=leadId(p.name);
+  var prev=logOf(p.name);
+  var firstTime=!prev;
+  var rec={
+    id:id,
+    employee:String((EMP&&EMP.name)||EID),
+    business:p.name,
+    phone:p.phone,
+    done:'yes',
+    outcome:kind,
+    notes:(prev&&prev.notes)||'',
+    called_at:(prev&&prev.called_at)||td(),
+    updated_at:td(),
+    deleted:''
+  };
+  CLOG[id]=rec;
+  if(kind==='no_answer')renderCB();
+  renderList();
+  /* only move the counters the first time a lead is worked, so changing your mind never double counts */
+  if(firstTime){bump(kind==='booked'?'demo':'dial');}
+  else if(kind==='booked'&&String(prev.outcome)!=='booked'){bump('demo',true);}
+  else{toast('Updated: '+OCLABEL[kind]);}
+  var ok=await pushLog(rec);
+  if(!ok)toast('Could not save that one, tap it again',1);
+}
+async function clearOutcome(idx){
+  var p=parseLine(lines()[idx]||'');
+  var id=leadId(p.name);
+  var prev=CLOG[id];
+  if(!prev)return;
+  var rec=Object.assign({},prev,{deleted:'yes',updated_at:td()});
+  CLOG[id]=rec;
+  renderList();renderCB();
+  toast('Cleared. Your dial count stays.');
+  await pushLog(rec);
+}
+/* leads still worth a second try = logged as no answer */
+function callbackLeads(){
+  var out=[];
+  lines().forEach(function(line,idx){
+    var p=parseLine(line);var st=logOf(p.name);
+    if(st&&String(st.outcome)==='no_answer')out.push({name:p.name,phone:p.phone,idx:idx,tip:tipFor(p.name)});
+  });
+  return out;
+}
+function worked(){var n=0;lines().forEach(function(l){if(logOf(parseLine(l).name))n++;});return n;}
+
+async function load(){
+  try{
+    var r=await fetch(API+'/ops-data?tab=Employees&cb='+Date.now());
+    var d=await r.json();var rows=Array.isArray(d)?d:(d.data||[]);
+    ALLEMP=rows;
+    EMP=rows.filter(function(x){return isEmp(x,EID);})[0]||null;
+  }catch(e){EMP=null;}
+  if(!EMP){document.getElementById('app').innerHTML='<div class="load">Couldn\'t load your card.<br><br>Ask Avery to send you your link again, then reload.</div>';return;}
+  if(!fresh()){EMP.dials_today=0;EMP.demos_today=0;}
+  await loadLog();
+  render();
+}
+/* demoOnly = the dial was already counted on this lead, only the demo is new */
+async function bump(kind,demoOnly){
+  if(!fresh()){EMP.dials_today=0;EMP.demos_today=0;EMP.last_active=td();}
+  ensureCycle();
+  if(!demoOnly){
+    EMP.dials_today=(parseInt(EMP.dials_today,10)||0)+1;
+    EMP.cycle_dials=(parseInt(EMP.cycle_dials,10)||0)+1;
+  }
+  if(kind==='demo'){EMP.demos_today=(parseInt(EMP.demos_today,10)||0)+1;EMP.cycle_demos=(parseInt(EMP.cycle_demos,10)||0)+1;}
+  EMP.last_active=td();EMP.updated_at=td();
+  paintCounters();paintLeaderboard();
+  toast(kind==='demo'?'Demo booked. Nice.':'Dial logged.');
+  try{await fetch(API+'/ops-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tab:'Employees',row:EMP})});}catch(e){}
+}
+function paintCounters(){
+  var dn=document.getElementById('d-num');if(dn){var tgt=parseInt(EMP.target_dials,10)||0;dn.innerHTML=dials()+(tgt?' <small>/ '+tgt+'</small>':'');}
+  var mn=document.getElementById('m-num');if(mn)mn.textContent=demos();
+}
+/* who am I calling — adapts to whatever niche/city is on the sheet, or says nothing if blank */
+function beat(){
+  var n=String((EMP&&EMP.niche)||'').trim();
+  var c=String((EMP&&EMP.city)||'').trim();
+  if(n&&c)return esc(n)+' in '+esc(c);
+  if(n)return esc(n);
+  if(c)return 'your leads in '+esc(c);
+  return 'the leads on your list';
+}
+
+function render(){
+  var noun=String(EMP.niche||'').trim();
+  var nounShop=noun?noun.replace(/ing$/,'')+'s':'local businesses';
+  var city=String(EMP.city||'').trim();
+  var on=String(EMP.active||'yes').toLowerCase()!=='no';
+  var demoUrl=String(EMP.demo_url||'').trim();
+  var h='';
+  h+='<div class="top"><span class="logo">Ambrosia</span><button class="refresh" onclick="load()">↻ Refresh</button></div>';
+  h+='<h1>Hey '+esc(EMP.name||'there')+' 👋</h1>';
+  h+='<div class="status"><span class="dot" style="background:'+(on?'#2FA79E':'#8A8A82')+'"></span>'+(on?'You\'re calling ':'Paused — ')+beat()+'</div>';
+
+  if(amILeading())h+='<div class="crown">👑 You\'re the top caller this cycle. Don\'t let it slip.</div>';
+
+  if(EMP.directive)h+='<div class="directive">'+esc(EMP.directive)+'</div>';
+
+  // counters
+  var tgt=parseInt(EMP.target_dials,10)||0;
+  h+='<div class="counters">';
+  h+='<div class="ctr"><div class="n" id="d-num">'+dials()+(tgt?' <small>/ '+tgt+'</small>':'')+'</div><div class="l">Dials today</div></div>';
+  h+='<div class="ctr"><div class="n" id="m-num">'+demos()+'</div><div class="l">Demos booked</div></div>';
+  h+='</div>';
+  h+='<div class="logrow"><button class="logbtn" onclick="bump(\'dial\')">+ Log a dial</button><button class="logbtn gold" onclick="bump(\'demo\')">+ Booked a demo</button></div>';
+
+  // leaderboard
+  h+='<div id="lb-wrap"></div>';
+
+  // coach
+  h+='<h2>Your coach</h2><div class="tc"><div class="tc-thread" id="tc-thread"></div>';
+  h+='<div class="tc-chips">'+CHIPS.map(function(c,i){return '<button onclick="coachChip('+i+')">'+esc(c.length>20?c.slice(0,18)+'…':c)+'</button>';}).join('')+'</div>';
+  h+='<div class="tc-input-row"><input id="tc-input" placeholder="Ask your coach…" onkeydown="if(event.key===\'Enter\'){event.preventDefault();coachSend();}"><button class="tc-send" onclick="coachSend()">Send</button></div>';
+  h+='<div class="tc-foot"><button class="tc-new" onclick="coachNew()">New chat</button></div></div>';
+
+  // the one rule
+  h+='<h2>The one rule</h2>';
+  h+='<div class="rule"><div class="say">Slow down. Low, calm voice. Sound like you\'re calling a buddy, not reading a script. End your ask like a <b>statement</b>, not a nervous question.</div>'
+    +'<div class="say" style="margin-top:9px;color:var(--muted)">Rushed and hyped = hang up in 3 seconds. Calm and a little curious wins.</div></div>';
+
+  // openers
+  h+='<h2>Open with this</h2><div class="card"><div class="pick">Pick one. Make it about <b>them</b>, not you.</div>';
+  h+='<div class="label">The honest one</div><div class="say">"Hey, you don\'t know me and I\'ll be straight with you, this is a cold call. You can hang up, or give me 20 seconds and then decide. Fair enough?"</div>';
+  h+='<div class="label" style="margin-top:15px">The question one</div><div class="say">"Hey, quick one. When your guys are out on a job and the phone rings, what usually happens to that call?"</div>';
+  h+='<div class="label" style="margin-top:15px">The local one</div><div class="say">"Hey, I work with a couple '+esc(nounShop)+(city?' here in '+esc(city):' around here')+' and figured I\'d see if this even makes sense for you. Cool if I ask one quick thing?"</div></div>';
+
+  // pain
+  h+='<h2>Why they care (say it calm, like a fact)</h2><div class="card"><ul>'
+    +'<li>Shops like theirs miss about <span class="big">1 in 4 calls</span> when the crew\'s on a job.</li>'
+    +'<li><span class="big">85%</span> of people who hit voicemail hang up and call the next guy.</li>'
+    +'<li>One missed emergency job is worth about <span class="big">$850</span>.</li>'
+    +'<li>Every missed call is usually a booked job that went to a competitor.</li></ul>'
+    +'<div class="say" style="margin-top:13px;color:var(--muted)">You\'re not selling "AI." You\'re helping them stop handing jobs to the next guy.</div></div>';
+
+  // call list (own wrapper so we can repaint it without nuking the coach thread)
+  h+='<div id="list-wrap"></div>';
+
+  // call-back pile
+  h+='<div id="cb-wrap"></div>';
+
+  // objections
+  h+='<h2>If they push back</h2>';
+  h+=obj('"Is this a sales call?"','"Honestly, kind of. I build one thing and I think it fits you. 20 seconds and you decide, deal?"');
+  h+=obj('"How did you get my number?"',noun?('"You\'re listed as a '+esc(noun)+', I\'m just calling local shops one by one. Totally fine to tell me to buzz off."'):'"You\'re listed publicly, I\'m just working down a list of local businesses one by one. Totally fine to tell me to buzz off."');
+  h+=obj('"We already have voicemail."','"Right, and 8 of 10 callers hang up on voicemail. This actually answers, talks to them, and books the job. Want to hear it take a call?"');
+  h+=obj('"How much is it?"','"Way less than a receptionist and it never misses a call. Let me show it working first, then price is the easy part."');
+  h+=obj('"I\'m busy."','"Totally, and that\'s kind of the point. 20 seconds, can I just text you the demo and you look later?"');
+  h+=obj('"Just email me."','"Will do, what\'s the best address? I\'ll also text the demo so you can hear it, that\'s the part that matters."');
+  h+=obj('"Not interested."','"No worries, appreciate your time. If you ever get slammed and start missing calls, I\'m here."');
+
+  // the ask
+  h+='<h2>The ask (this is the whole goal)</h2><div class="card"><div class="say">"I\'m not going to pitch you on the phone. Let me build you a <b class="green">free 30-second demo</b> of it answering YOUR phone, in your shop\'s name. You listen, and if it\'s cool we grab 10 minutes. If not, no hard feelings. What\'s the best number to text it to?"</div>'
+    +'<div class="say" style="margin-top:11px;color:var(--muted)">Get the demo yes. Get the number. That\'s a win. Don\'t talk price.</div></div>';
+
+  // voicemail
+  h+='<h2>No answer? Leave this, every time</h2><div class="card"><div class="say">"Hi, this is '+esc(EMP.name||'')+' with Ambrosia. I build the thing that answers your phones and books the job when your crew\'s on a site, so you stop losing calls to the next guy. I\'ll text you a 30-second demo, give it a listen. Talk soon."</div>';
+  if(demoUrl)h+='<a class="demo-btn" style="margin-top:12px" href="'+esc(demoFor('your shop'))+'" target="_blank">Hear a sample demo</a>';
+  h+='</div>';
+
+  // donts
+  h+='<h2>Don\'t</h2><div class="card dont"><ul>'
+    +'<li>Don\'t open with "how are you today."</li>'
+    +'<li>Don\'t rattle the script fast.</li>'
+    +'<li>Don\'t talk price or features in the first 30 seconds.</li>'
+    +'<li>Don\'t sound hyped or salesy.</li>'
+    +'<li>Don\'t argue an objection. Agree, then go back to the demo.</li></ul></div>';
+
+  h+='<footer>Ambrosia AI · you got this, '+esc(EMP.name||'')+'<br>Slow voice. Make it about them. Get the demo yes.</footer>';
+
+  document.getElementById('app').innerHTML=h;
+  paintCoach();paintLeaderboard();renderList();renderCB();
+}
+function obj(q,a){return '<details><summary>'+esc(q)+'</summary><p>'+esc(a)+'</p></details>';}
+
+/* the call list, repainted on its own so marking a lead never resets the page */
+function renderList(){
+  var w=document.getElementById('list-wrap');if(!w)return;
+  var ls=lines();
+  var demoUrl=String((EMP&&EMP.demo_url)||'').trim();
+  if(!ls.length){
+    w.innerHTML='<h2>Your call list</h2><div class="card"><div class="say" style="color:var(--muted)">No list set yet. Ask Avery or Tolu to load your numbers, or work your own and tap <b>+ Log a dial</b> above as you go.</div></div>';
+    return;
+  }
+  var done=worked();
+  var h='<h2>Your call list ('+done+' of '+ls.length+' worked)</h2>';
+  if(!CLOG_OK)h+='<div class="prog" style="border-left-color:#DF5583;color:#EE93B4">Couldn\'t reach the log just now. Tap ↻ Refresh before you start so nothing gets lost.</div>';
+  else if(done>=ls.length)h+='<div class="prog">Whole list worked. Ask for more numbers.</div>';
+  else h+='<div class="prog">'+(ls.length-done)+' left to work. Tap a result after every call so Avery sees it.</div>';
+  ls.forEach(function(line,idx){
+    var p=parseLine(line);var tel=p.phone.replace(/[^0-9+]/g,'');
+    var st=logOf(p.name);var oc=st?String(st.outcome||''):'';
+    h+='<div class="call-item'+(st?' logged':'')+'">';
+    h+='<div class="biz">'+esc(p.name)+'</div>';
+    if(p.phone)h+='<div class="ph">'+esc(p.phone)+'</div>';
+    if(oc)h+='<div><span class="pill '+esc(oc)+'">'+esc(OCLABEL[oc]||oc)+'</span></div>';
+    h+='<div class="call-btns">'
+      +(tel?'<a class="cbtn call" href="tel:'+esc(tel)+'">Call</a>':'')
+      +((tel&&demoUrl)?'<a class="cbtn book" href="'+esc(demoSms(tel,p.name))+'">Text demo</a>':'')
+      +'</div>';
+    h+='<div class="oc-label">'+(oc?'Result (tap to change)':'How did it go?')+'</div><div class="oc-grid">';
+    OUTCOMES.forEach(function(o){
+      h+='<button class="oc '+o.k+(oc===o.k?' on':'')+'" onclick="setOutcome('+idx+',\''+o.k+'\')">'+esc(o.t)+'</button>';
+    });
+    h+='</div>';
+    if(oc)h+='<button class="undo" onclick="clearOutcome('+idx+')">Not this one, clear it</button>';
+    h+='</div>';
+  });
+  w.innerHTML=h;
+}
+function paintLeaderboard(){
+  var w=document.getElementById('lb-wrap');if(!w)return;
+  var rk=ranked();var reward=cfgReward();var myId=EMP?String(EMP.id):'';
+  var lead=rk[0];var iLead=lead&&String(lead.e.id)===myId&&(lead.m>0||lead.d>0);
+  var h='<h2>Leaderboard · this 2 weeks</h2><div class="card lb">';
+  if(reward)h+='<div class="lb-prize">🏆 Top caller this cycle earns: <b>'+esc(reward)+'</b></div>';
+  if(!rk.length){h+='<div class="say" style="color:var(--muted)">No callers yet.</div>';}
+  rk.forEach(function(r,i){var me=String(r.e.id)===myId;var crown=(i===0&&(r.m>0||r.d>0));
+    h+='<div class="lb-row'+(me?' me':'')+'"><span class="lb-rank">'+(crown?'👑':(i+1))+'</span>'
+      +'<span class="lb-name">'+esc(r.e.name)+(me?' (you)':'')+(r.tr>0?' <span class="lb-tr">'+r.tr+'🏆</span>':'')+'</span>'
+      +'<span class="lb-stat">'+r.m+' demo'+(r.m===1?'':'s')+' · '+r.d+' dial'+(r.d===1?'':'s')+'</span></div>';
+  });
+  if(iLead)h+='<div class="lb-you">You\'re #1 right now.'+(reward?' Hold it and you earn: '+esc(reward)+'.':' Keep it up.')+'</div>';
+  else if(rk.length>1&&reward)h+='<div class="lb-you">Top the board this cycle and it\'s yours.</div>';
+  h+='</div>';
+  w.innerHTML=h;
+}
+function renderCB(){
+  var w=document.getElementById('cb-wrap');if(!w)return;
+  var a=callbackLeads();if(!a.length){w.innerHTML='';return;}
+  var demoUrl=String((EMP&&EMP.demo_url)||'').trim();
+  var h='<h2>Call back ('+a.length+')</h2>';
+  a.forEach(function(it){var tel=String(it.phone||'').replace(/[^0-9+]/g,'');
+    h+='<div class="call-item"><div class="biz">'+esc(it.name||'Lead')+'</div>'+(it.phone?'<div class="ph">'+esc(it.phone)+'</div>':'')
+      +'<div class="cbtip">'+esc(it.tip||'')+'</div><div class="call-btns">'
+      +(tel?'<a class="cbtn call" href="tel:'+esc(tel)+'">Call again</a>':'')
+      +((tel&&demoUrl)?'<a class="cbtn book" href="'+esc(demoSms(tel,it.name))+'">Text demo</a>':'')
+      +'<button class="cbtn" onclick="setOutcome('+it.idx+',\'interested\')">Interested</button>'
+      +'<button class="cbtn book" onclick="setOutcome('+it.idx+',\'booked\')">Booked</button></div></div>';
+  });
+  w.innerHTML=h;
+}
+
+/* ---------- coach (separate Haiku, phones only) ---------- */
+function tcKey(){return 'ambrosia_tej_coach_'+EID;}
+function loadCoach(){try{TCOACH=JSON.parse(localStorage.getItem(tcKey())||'[]');}catch(e){TCOACH=[];}}
+function saveCoach(){try{localStorage.setItem(tcKey(),JSON.stringify(TCOACH.slice(-40)));}catch(e){}}
+function paintCoach(){var t=document.getElementById('tc-thread');if(!t)return;
+  if(!TCOACH.length){t.innerHTML='<div class="tc-hint">Stuck on a call? Ask me anything. I only know the phones, not the business side.</div>';return;}
+  t.innerHTML=TCOACH.map(function(m){return '<div class="tc-msg tc-'+(m.role==='user'?'me':'ai')+'">'+esc(m.content)+'</div>';}).join('');
+  t.scrollTop=t.scrollHeight;}
+function coachChip(i){var inp=document.getElementById('tc-input');if(inp){inp.value=CHIPS[i]||'';coachSend();}}
+function coachNew(){TCOACH=[];saveCoach();paintCoach();}
+async function coachSend(){
+  var inp=document.getElementById('tc-input');if(!inp)return;var q=String(inp.value||'').trim();if(!q)return;
+  inp.value='';TCOACH.push({role:'user',content:q});saveCoach();paintCoach();
+  var t=document.getElementById('tc-thread');var typing=document.createElement('div');typing.className='tc-msg tc-ai tc-typing';typing.textContent='…';if(t){t.appendChild(typing);t.scrollTop=t.scrollHeight;}
+  var ctx={name:EMP.name,niche:EMP.niche,city:EMP.city,directive:EMP.directive};
+  try{
+    var r=await fetch(API+'/employee-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:TCOACH.slice(-16),ctx:ctx,e:EID})});
+    var d=await r.json();var reply=(d&&d.reply)?String(d.reply):'Say that again? I want to give you a straight answer.';
+    TCOACH.push({role:'assistant',content:reply});saveCoach();paintCoach();
+  }catch(e){TCOACH.push({role:'assistant',content:'Trouble connecting right now. Try again in a sec.'});saveCoach();paintCoach();}
+}
+
+loadCoach();
+load();
+</script>
+</body>
+</html>
