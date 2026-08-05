@@ -14,16 +14,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#080807;--surface:#131312;--surface2:#0E0E0D;--surface3:#1A1A18;--primary:#1A3A2A;
+    --bg:#080807;--surface:#131312;--surface2:#0E0E0D;--surface3:#1A1A18;
+    /* Deep Luxury Green from the brand spec, plus a lifted step that is actually
+       legible against the dark surfaces. The #1A3A2A original is near-black. */
+    --primary:#1A3A2A;--primary-lift:#2C6B4C;
     --gold:#C9A84C;--gold-light:#E8D5A3;--gold-deep:#8A6E28;--text:#F5F5F0;--muted:#8A8A82;
-    --border:#201F1C;--border2:#2C2B27;--danger:#DF5583;
-    --c1:#C39D38;--c2:#4A93D6;--c3:#D9663F;--c4:#2FA79E;--c5:#9B72E0;--c6:#DF5583;
+    --border:#201F1C;--border2:#2C2B27;--danger:#D4574E;
+    /* STATUS: reserved and semantic. Never reused as a chart series.
+       All five verified >= 4.5:1 as text on --surface. */
+    --st-good:#4FB98C;--st-warn:#D98A3F;--st-bad:#D4574E;--st-info:#6FA8C7;--st-prog:#C9A84C;
+    /* CATEGORICAL chart series. Anchored on the brand hues (gold 90deg,
+       forest 160deg) with lightness spread to break the blue/violet deutan
+       collision. Validated: lightness band, chroma floor, CVD separation
+       (worst adjacent dE 9.1 protan), normal-vision floor 18.2, contrast. */
+    --c1:#AB8704;--c2:#007F4E;--c3:#1F6CB0;--c4:#B879C7;--c5:#B25634;--c6:#8A6E28;
     --ease:cubic-bezier(.4,0,.2,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
-    background-image:radial-gradient(1100px 480px at 50% -220px,rgba(201,168,76,.10),transparent 70%),radial-gradient(700px 400px at 100% 0,rgba(26,58,42,.18),transparent 60%);background-attachment:fixed}
+    background-image:radial-gradient(1100px 480px at 50% -220px,rgba(201,168,76,.10),transparent 70%),radial-gradient(820px 460px at 100% 0,rgba(26,58,42,.42),transparent 62%),radial-gradient(600px 380px at 0% 100%,rgba(26,58,42,.22),transparent 60%);background-attachment:fixed}
   ::selection{background:var(--gold);color:#080807}
   ::-webkit-scrollbar{width:11px;height:11px}
   ::-webkit-scrollbar-track{background:var(--surface2)}
@@ -52,9 +62,9 @@
   .agenda-item{display:flex;justify-content:space-between;gap:10px;padding:12px 13px;border:1px solid var(--border);border-left:2px solid var(--gold);margin-bottom:7px;cursor:pointer;background:var(--surface);font-size:13px;transition:border-color .15s,background .15s}
   .agenda-item:hover{border-left-color:var(--gold-light);background:var(--surface3)}
   .agenda-item .r{color:var(--muted);font-size:11px;white-space:nowrap}
-  .agenda-item .fu{color:var(--c1)}
+  .agenda-item .fu{color:var(--st-prog)}
   .badge{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);border:1px solid var(--border2);padding:7px 11px;white-space:nowrap}
-  .accent{height:1px;margin:18px 0 0;background:linear-gradient(90deg,transparent,var(--gold-deep),var(--gold),var(--gold-deep),transparent);background-size:200% auto;animation:slide 6s linear infinite;opacity:.7}
+  .accent{height:1px;margin:18px 0 0;background:linear-gradient(90deg,transparent,var(--primary-lift),var(--gold),var(--primary-lift),transparent);background-size:200% auto;animation:slide 6s linear infinite;opacity:.7}
   @keyframes slide{to{background-position:200% center}}
   /* nav */
   .sidebar{position:fixed;left:0;top:0;height:100vh;width:64px;background:linear-gradient(180deg,var(--surface2),var(--bg));border-right:1px solid var(--border);z-index:70;display:flex;flex-direction:column;transition:width .26s var(--ease);overflow:hidden}
@@ -113,7 +123,7 @@
   .goal .gfig{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
   .goal .gfig small{font-size:15px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:400}
   .gbar{height:9px;background:var(--surface2);border:1px solid var(--border2);margin:16px 0 10px;position:relative;overflow:hidden}
-  .gfill{height:100%;background:linear-gradient(90deg,var(--gold-deep),var(--gold),var(--gold-light));width:0;transition:width 1s var(--ease);position:relative}
+  .gfill{height:100%;background:linear-gradient(90deg,var(--primary-lift),var(--gold),var(--gold-light));width:0;transition:width 1s var(--ease);position:relative}
   .gfill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);background-size:60% 100%;animation:sheen 2.6s linear infinite}
   @keyframes sheen{0%{background-position:-60% 0}100%{background-position:160% 0}}
   .goal .gsub{font-size:12px;color:var(--muted)}
@@ -147,11 +157,11 @@
   .biz{font-weight:600}
   .sm{font-size:11px;color:var(--muted)}
   .pill{font-size:10px;padding:3px 9px;border:1px solid var(--muted);color:var(--muted);white-space:nowrap;text-transform:capitalize;display:inline-block;border-radius:2px}
-  .pill.new{border-color:var(--c2);color:var(--c2)}
-  .pill.emailed,.pill.emailed_1,.pill.emailed_2,.pill.emailed_3,.pill.called,.pill.voicemail,.pill.contacted,.pill.sequence_done{border-color:var(--c1);color:var(--c1)}
-  .pill.replied,.pill.interested{border-color:var(--c4);color:var(--c4)}
+  .pill.new{border-color:var(--st-info);color:var(--st-info)}
+  .pill.emailed,.pill.emailed_1,.pill.emailed_2,.pill.emailed_3,.pill.called,.pill.voicemail,.pill.contacted,.pill.sequence_done{border-color:var(--st-prog);color:var(--st-prog)}
+  .pill.replied,.pill.interested{border-color:var(--st-good);color:var(--st-good)}
   .pill.booked,.pill.won{border-color:var(--gold-light);color:var(--gold-light);background:rgba(201,168,76,.09)}
-  .pill.declined,.pill.lost,.pill.suppressed{border-color:var(--c3);color:var(--c3)}
+  .pill.declined,.pill.lost,.pill.suppressed{border-color:var(--st-bad);color:var(--st-bad)}
   a{color:var(--gold);text-decoration:none}
   a:hover{text-decoration:underline}
   .rowbtn{background:none;border:1px solid var(--border2);color:var(--muted);padding:4px 9px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif}
@@ -169,7 +179,7 @@
   .kcard .kt{font-weight:600}
   .kcard .m{font-size:11px;color:var(--muted);margin-top:4px}
   .kcard .tag{font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border:1px solid var(--border2);color:var(--muted);margin-top:7px;display:inline-block}
-  .kcard .tag.high{border-color:var(--c3);color:var(--c3)}
+  .kcard .tag.high{border-color:var(--st-warn);color:var(--st-warn)}
   .coltot{font-size:10px;color:var(--gold);margin-top:2px;letter-spacing:.04em}
   /* notes */
   .notegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:13px}
@@ -201,7 +211,7 @@
   .clientcard .meta{font-size:12px;color:var(--muted);margin-bottom:10px}
   .empty{color:var(--muted);font-size:13px;padding:28px;text-align:center;border:1px dashed var(--border2);background:var(--surface2)}
   svg text{font-family:'Inter',sans-serif}
-  .banner{background:var(--surface);border:1px solid var(--c3);border-left:3px solid var(--c3);padding:12px 16px;margin-bottom:18px;font-size:12px;display:none}
+  .banner{background:var(--surface);border:1px solid var(--st-warn);border-left:3px solid var(--st-warn);padding:12px 16px;margin-bottom:18px;font-size:12px;display:none}
   /* drawer */
   .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .28s;z-index:90}
   .backdrop.on{opacity:1;pointer-events:auto}
@@ -371,7 +381,7 @@
   .emp-id h3{font-family:'Playfair Display',serif;font-size:18px}
   .emp-id .r{font-size:12px;color:var(--muted);margin-top:2px}
   .emp-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
-  .emp-on{background:var(--c4)}.emp-off{background:var(--muted)}
+  .emp-on{background:var(--st-good)}.emp-off{background:var(--muted)}
   .emp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 16px}
   .emp-stat{background:var(--surface2);border:1px solid var(--border);border-top:2px solid var(--gold);padding:12px 13px}
   .emp-stat .n{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -412,10 +422,10 @@
     overflow:hidden;text-overflow:ellipsis}
   .qrow .pill{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;
     border:1px solid var(--border2);color:var(--muted);flex:0 0 auto;border-radius:2px}
-  .qrow .pill.leak{color:var(--c3);border-color:rgba(217,102,63,.4)}
-  .qrow .pill.proof{color:var(--c4);border-color:rgba(47,167,158,.4)}
-  .qrow .pill.secret{color:var(--c2);border-color:rgba(74,147,214,.4)}
-  .qrow .pill.founder{color:var(--c5);border-color:rgba(155,114,224,.4)}
+  .qrow .pill.leak{color:var(--st-warn);border-color:rgba(217,138,63,.42)}
+  .qrow .pill.proof{color:var(--st-good);border-color:rgba(79,185,140,.42)}
+  .qrow .pill.secret{color:var(--st-info);border-color:rgba(111,168,199,.42)}
+  .qrow .pill.founder{color:var(--gold-light);border-color:rgba(232,213,163,.42)}
   .qrow .pill.done{color:#161610;background:var(--gold);border-color:transparent}
   .mini{background:none;border:1px solid var(--border2);color:var(--text);font-family:'Inter',sans-serif;
     font-size:12px;padding:7px 12px;cursor:pointer;transition:all .15s var(--ease);flex:0 0 auto;
@@ -457,8 +467,8 @@
     font-variant-numeric:tabular-nums}
   .qbnote{font-size:12px;line-height:1.5;color:var(--muted);margin-top:12px;padding-top:12px;
     border-top:1px solid var(--border)}
-  .qbnote.warn{color:var(--c3)}
-  .qbnote.ok{color:var(--c4)}
+  .qbnote.warn{color:var(--st-warn)}
+  .qbnote.ok{color:var(--st-good)}
 
   /* promo calendar */
   .promo{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
@@ -882,7 +892,11 @@ Redline Plumbing, 403-555-0101, Calgary, plumbing"></textarea>
 const N8N_BASE=(location.hostname.indexOf('n8n.ambrosia-ai.org')>=0)?location.origin:'https://n8n.ambrosia-ai.org';
 const API=N8N_BASE+'/webhook';
 const DEMO=N8N_BASE+'/webhook/plumbing-demo';
-const CAT=['#C39D38','#4A93D6','#D9663F','#2FA79E','#9B72E0','#DF5583'];
+/* Read the categorical series straight off the :root tokens so the palette has
+   exactly one source of truth. Falls back to brand gold if a token is missing. */
+const CAT=(function(){var cs=getComputedStyle(document.documentElement);
+  return ['--c1','--c2','--c3','--c4','--c5'].map(function(v){
+    return (cs.getPropertyValue(v)||'').trim()||'#C9A84C';});})();
 const GOLDRAMP=['#E8D5A3','#D9C07A','#C9A84C','#B08F35','#8A6E28'];
 const FUNNEL=[['new','New'],['contacted','Contacted'],['replied','Replied'],['booked','Booked'],['won','Won']];
 const DEALSTAGES=['new','contacted','demo_sent','call_booked','proposal','won','lost'];
@@ -1048,11 +1062,26 @@ async function reloadTab(tab){
 }
 
 /* ---------- charts ---------- */
-function hbar(elId,rows,useCat){var el=document.getElementById(elId);if(!el)return;if(!rows.length){el.innerHTML='<div class="sm">No data yet</div>';return;}var max=Math.max.apply(null,rows.map(function(r){return r.v;}))||1;var rh=28,gap=8,w=Math.max(el.clientWidth||480,320),lw=110,br=w-lw-46;var h=rows.length*(rh+gap);var s='<svg width="100%" viewBox="0 0 '+w+' '+h+'" role="img">';rows.forEach(function(r,i){var y=i*(rh+gap),bw=Math.max((r.v/max)*br,2),col=useCat?CAT[i%CAT.length]:'#C9A84C';s+='<text x="0" y="'+(y+rh/2+4)+'" fill="#8A8A82" font-size="12">'+esc(r.k).slice(0,16)+'</text>';s+='<rect x="'+lw+'" y="'+y+'" width="'+bw+'" height="'+rh+'" rx="4" fill="'+col+'"><title>'+esc(r.k)+': '+r.v+'</title></rect>';s+='<text x="'+(lw+bw+8)+'" y="'+(y+rh/2+4)+'" fill="#F5F5F0" font-size="12" font-weight="600">'+r.v+'</text>';});s+='</svg>';el.innerHTML=s;}
+/* Status is not an identity, so it must not take a cycled categorical hue.
+   Colouring "declined" green because it happened to land in slot 2 is worse
+   than no colour at all. Positive states read green, dead states read red,
+   in-flight reads gold. Every bar is directly labelled, so meaning never
+   rests on colour alone. */
+function statusColor(k){
+  var cs=getComputedStyle(document.documentElement);
+  function t(n,f){return (cs.getPropertyValue(n)||'').trim()||f;}
+  var s=String(k||'').toLowerCase();
+  if(/^(won)$/.test(s))return t('--st-good','#4FB98C');
+  if(/^(replied|interested|booked)$/.test(s))return t('--st-good','#4FB98C');
+  if(/^(declined|lost|suppressed|bounced|opted_out)$/.test(s))return t('--st-bad','#D4574E');
+  if(/^(new)$/.test(s))return t('--st-info','#6FA8C7');
+  return t('--st-prog','#C9A84C');
+}
+function hbar(elId,rows,mode){var el=document.getElementById(elId);if(!el)return;if(!rows.length){el.innerHTML='<div class="sm">No data yet</div>';return;}var max=Math.max.apply(null,rows.map(function(r){return r.v;}))||1;var rh=28,gap=8,w=Math.max(el.clientWidth||480,320),lw=110,br=w-lw-46;var h=rows.length*(rh+gap);var s='<svg width="100%" viewBox="0 0 '+w+' '+h+'" role="img">';rows.forEach(function(r,i){var y=i*(rh+gap),bw=Math.max((r.v/max)*br,2),col=(mode==='status')?statusColor(r.k):(mode?CAT[i%CAT.length]:'#C9A84C');s+='<text x="0" y="'+(y+rh/2+4)+'" fill="#8A8A82" font-size="12">'+esc(r.k).slice(0,16)+'</text>';s+='<rect x="'+lw+'" y="'+y+'" width="'+bw+'" height="'+rh+'" rx="4" fill="'+col+'"><title>'+esc(r.k)+': '+r.v+'</title></rect>';s+='<text x="'+(lw+bw+8)+'" y="'+(y+rh/2+4)+'" fill="#F5F5F0" font-size="12" font-weight="600">'+r.v+'</text>';});s+='</svg>';el.innerHTML=s;}
 function funnelChart(elId,stages){var el=document.getElementById(elId);if(!el)return;var max=Math.max.apply(null,stages.map(function(s){return s.v;}))||1;var rh=32,gap=10,w=Math.max(el.clientWidth||480,320),lw=90,br=w-lw-56;var h=stages.length*(rh+gap);var s='<svg width="100%" viewBox="0 0 '+w+' '+h+'" role="img">';stages.forEach(function(st,i){var y=i*(rh+gap),bw=Math.max((st.v/max)*br,2),col=GOLDRAMP[i%GOLDRAMP.length];var pct=Math.round((st.v/(stages[0].v||1))*100);s+='<text x="0" y="'+(y+rh/2+4)+'" fill="#8A8A82" font-size="12">'+st.k+'</text>';s+='<rect x="'+lw+'" y="'+y+'" width="'+bw+'" height="'+rh+'" rx="4" fill="'+col+'"><title>'+st.k+': '+st.v+' ('+pct+'%)</title></rect>';s+='<text x="'+(lw+bw+8)+'" y="'+(y+rh/2+4)+'" fill="#F5F5F0" font-size="12" font-weight="600">'+st.v+'</text>';});s+='</svg>';el.innerHTML=s;}
 function countBy(list,fn){var m={};list.forEach(function(r){var k=fn(r)||'unknown';m[k]=(m[k]||0)+1;});return m;}
 function kpi(list){var contacted=list.filter(function(r){var s=stageOf(r.status);return s==='contacted'||s==='replied'||s==='booked'||s==='won';}).length;var replied=list.filter(function(r){var s=stageOf(r.status);return s==='replied'||s==='booked'||s==='won';}).length;var booked=list.filter(function(r){var s=stageOf(r.status);return s==='booked'||s==='won';}).length;var won=list.filter(function(r){return stageOf(r.status)==='won';}).length;var rr=contacted?Math.round(replied/contacted*100):0;var tiles=[['Leads',list.length,''],['Contacted',contacted,''],['Replied',replied,''],['Booked',booked,''],['Won',won,''],['Reply rate',rr,'%']];document.getElementById('kpis').innerHTML=tiles.map(function(t,i){return '<div class="tile" style="animation-delay:'+(i*55)+'ms"><div class="n" id="kpi'+i+'">0'+t[2]+'</div><div class="l">'+t[0]+'</div></div>';}).join('');tiles.forEach(function(t,i){animateNum(document.getElementById('kpi'+i),t[1],t[2]);});}
-function overview(){var L=live(LEADS);kpi(L);renderGoal();renderFocus();var sc={new:0,contacted:0,replied:0,booked:0,won:0};L.forEach(function(r){var s=stageOf(r.status);if(s==='dead')return;if(s==='won'){sc.won++;sc.booked++;sc.replied++;sc.contacted++;sc.new++;}else if(s==='booked'){sc.booked++;sc.replied++;sc.contacted++;sc.new++;}else if(s==='replied'){sc.replied++;sc.contacted++;sc.new++;}else if(s==='contacted'){sc.contacted++;sc.new++;}else{sc.new++;}});funnelChart('c-funnel',FUNNEL.map(function(f){return {k:f[1],v:sc[f[0]]};}));var byN=countBy(L,function(r){return (r.niche||'').toLowerCase();});hbar('c-niche',Object.keys(byN).map(function(k){return {k:k,v:byN[k]};}).sort(function(a,b){return b.v-a.v;}),true);var byS=countBy(L,function(r){return String(r.status||'new').toLowerCase();});hbar('c-status',Object.keys(byS).map(function(k){return {k:k,v:byS[k]};}).sort(function(a,b){return b.v-a.v;}),true);var byC=countBy(L,function(r){return r.city||'';});hbar('c-city',Object.keys(byC).map(function(k){return {k:k,v:byC[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,8),false);}
+function overview(){var L=live(LEADS);kpi(L);renderGoal();renderFocus();var sc={new:0,contacted:0,replied:0,booked:0,won:0};L.forEach(function(r){var s=stageOf(r.status);if(s==='dead')return;if(s==='won'){sc.won++;sc.booked++;sc.replied++;sc.contacted++;sc.new++;}else if(s==='booked'){sc.booked++;sc.replied++;sc.contacted++;sc.new++;}else if(s==='replied'){sc.replied++;sc.contacted++;sc.new++;}else if(s==='contacted'){sc.contacted++;sc.new++;}else{sc.new++;}});funnelChart('c-funnel',FUNNEL.map(function(f){return {k:f[1],v:sc[f[0]]};}));var byN=countBy(L,function(r){return (r.niche||'').toLowerCase();});hbar('c-niche',Object.keys(byN).map(function(k){return {k:k,v:byN[k]};}).sort(function(a,b){return b.v-a.v;}),true);var byS=countBy(L,function(r){return String(r.status||'new').toLowerCase();});hbar('c-status',Object.keys(byS).map(function(k){return {k:k,v:byS[k]};}).sort(function(a,b){return b.v-a.v;}),'status');var byC=countBy(L,function(r){return r.city||'';});hbar('c-city',Object.keys(byC).map(function(k){return {k:k,v:byC[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,8),false);}
 
 /* ---------- insights (learning loop) ---------- */
 function daysAgo(n){var d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
